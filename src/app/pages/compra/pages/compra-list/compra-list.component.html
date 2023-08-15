@@ -1,0 +1,6 @@
+<!-- Display the paginated list of compras -->
+<ul>
+  <li *ngFor="let compra of paginatedCompras$ | async">
+    {{ compra.titulo }} - Precio: {{ compra.precio }} - Fecha: {{ compra.fechaCompra }}
+  </li>
+</ul>

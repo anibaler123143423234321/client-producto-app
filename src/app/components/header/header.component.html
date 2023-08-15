@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="onMenuToggleDispatch()" >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>Minimarket Job Store</span>
+
+  <div fxFlex fxLayout="row" fxLayoutAlign="flex-end" fxHide.xs>
+    <ul fxLayout="row" fxLayoutGap="10px" class="navegacion-menu"  >
+
+      <li><a>{{ user ? user.nombre + ' ' + user.apellido : null}}</a></li>
+
+      <li><a *ngIf="!isAuthorized" routerLink="auth/registration"> Registrar </a></li>
+      <li><a *ngIf="!isAuthorized" routerLink="auth/login"> Login </a></li>
+      <li><a *ngIf="isAuthorized"  routerLink="/"> Home </a></li>
+      <li (click)="onSignOut()"><a *ngIf="isAuthorized" routerLink="/" > Salir </a></li>
+    </ul>
+  </div>
+
+</mat-toolbar>

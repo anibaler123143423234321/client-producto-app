@@ -1,0 +1,49 @@
+<mat-nav-list>
+
+  <a *ngIf="isAuthorized"  mat-list-item (click)="closeMenu()" routerLink="/">
+    <mat-icon>home</mat-icon>
+    <span class="navegacion-list-label">Home</span>
+  </a>
+
+  <a *ngIf="!isAuthorized" mat-list-item (click)="closeMenu()" routerLink="auth/login">
+    <mat-icon>login</mat-icon>
+    <span class="navegacion-list-label">Inicio Sesion</span>
+  </a>
+
+  <a *ngIf="!isAuthorized" mat-list-item (click)="closeMenu()" routerLink="auth/registration">
+    <mat-icon>how_to_register</mat-icon>
+    <span class="navegacion-list-label">Registrar</span>
+  </a>
+
+  <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()">
+    <mat-icon>contact_support</mat-icon>
+    <span class="navegacion-list-label">Contacto</span>
+  </a>
+
+
+  <a *ngIf="isAdmin()" mat-list-item (click)="closeMenu()" routerLink="producto/nuevo">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Nuevo Producto</span>
+  </a>
+
+  <a *ngIf="isAdmin()" mat-list-item (click)="closeMenu()" routerLink="compra/nuevo">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Nueva Compra</span>
+  </a>
+
+  <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()" routerLink="producto/list">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Listado de Productos</span>
+  </a>
+
+  <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()" routerLink="compra/list">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Listado de Compras</span>
+  </a>
+
+  <a *ngIf="isAuthorized" mat-list-item (click)="onSignOut()" (click)="closeMenu()">
+    <mat-icon>logout</mat-icon>
+    <span class="navegacion-list-label">Salir Sesion</span>
+  </a>
+
+</mat-nav-list>
