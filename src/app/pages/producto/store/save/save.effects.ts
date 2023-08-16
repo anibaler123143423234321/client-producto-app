@@ -12,7 +12,7 @@ import { environment } from 'environments/environment';
 type Action = fromActions.All;
 
 @Injectable()
-export class SaveEffects {
+export class SaveEffectsProducto {
 
   constructor(
     private actions: Actions,
@@ -57,6 +57,17 @@ export class SaveEffects {
     )
   );
 
-
+  fetchProduct: Observable<Action> = createEffect(() =>
+    this.actions.pipe(
+      ofType(fromActions.Types.FETCH_PRODUCT),
+      switchMap((action: fromActions.FetchProduct) =>
+        this.httpClient.get<ProductoResponse>(`${environment.url}gateway/producto/${action.productId}`)
+          .pipe(
+            map((product: ProductoResponse) => new fromActions.FetchProductSuccess(product)),
+            catchError(err => of(new fromActions.FetchProductError(err.message)))
+          )
+      )
+    )
+  );
 
 }

@@ -1,9 +1,9 @@
 export interface Compra {
-  id: number;
+  id?: number; // El campo 'id' puede ser opcional si se generará automáticamente en el backend
   userId: string;
-  productoId: string;
+  productoId: number; // Cambiado a número para representar la ID del producto
   titulo: string;
-  precio: string;
-  fechaCompra: string;
-  cantidad: string;
+  precio: number; // Cambiado a número para representar el precio
+  fechaCompra: Date; // Cambiado a Date para representar la fecha
+  cantidad: number; // Cambiado a número para representar la cantidad
 }

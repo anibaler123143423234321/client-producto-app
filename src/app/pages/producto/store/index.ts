@@ -1,5 +1,5 @@
 import * as fromList from './save/save.reducer';
-import { SaveEffects } from './save/save.effects';
+import { SaveEffectsProducto } from './save/save.effects';
 import { ActionReducerMap, createFeatureSelector } from '@ngrx/store';
 
 
@@ -12,7 +12,7 @@ export const reducers : ActionReducerMap<ProductoState> = {
 }
 
 export const effects : any = [
-  SaveEffects
+  SaveEffectsProducto
 ]
 
 export const getProductoState = createFeatureSelector<ProductoState>('producto');

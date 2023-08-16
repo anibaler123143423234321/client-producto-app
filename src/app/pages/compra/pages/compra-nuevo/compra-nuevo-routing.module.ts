@@ -4,8 +4,8 @@ import { CompraNuevoComponent } from './compra-nuevo.component';
 
 const routes: Routes = [
   {
-  path: '',
-  component: CompraNuevoComponent
+    path: 'nuevaCompra/:productoId', // Asegúrate de tener :productoId como parámetro
+    component: CompraNuevoComponent
   }
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class CompraNuevoRoutingModule { }
+export class CompraNuevoRoutingModule {}

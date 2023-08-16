@@ -12,7 +12,7 @@ import { environment } from 'environments/environment';
 type Action = fromActions.All;
 
 @Injectable()
-export class SaveEffects {
+export class SaveEffectsCompra {
 
   constructor(
     private actions: Actions,
