@@ -29,6 +29,7 @@ export class ProductoListComponent implements OnInit {
     this.loading$ = this.store.pipe(select(fromList.getLoading));
     this.productos$ = this.store.pipe(select(fromList.getProductos));
     this.productos$.subscribe(productos => {
+      console.log("Productos:",productos)
       this.productosLength = productos?.length;
     });
   }
@@ -40,6 +41,7 @@ export class ProductoListComponent implements OnInit {
   get paginatedProductos$(): Observable<ProductoResponse[] | null> {
     return this.productos$.pipe(
       map(productos => {
+        console.log("Productos:",productos)
         if (!productos) {
           return null;
         }

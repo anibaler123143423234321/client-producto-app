@@ -1,7 +1,6 @@
 import {Action} from '@ngrx/store';
 import {ProductoCreateRequest, ProductoResponse} from './save.models';
 
-
 export enum Types {
   CREATE = '[Producto] Create: Start',
   CREATE_SUCCESS = '[Producto] Create: Success',
@@ -32,13 +31,10 @@ export class ReadError implements Action {
   constructor(public error: string){}
 }
 
-
-
 export class Create implements Action {
   readonly type = Types.CREATE;
   constructor(public producto: ProductoCreateRequest){}
 }
-
 
 export class CreateSuccess implements Action {
   readonly type = Types.CREATE_SUCCESS;

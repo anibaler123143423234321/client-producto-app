@@ -21,6 +21,7 @@ export class SaveEffectsCompra {
     private notification: NotificationService
   ) { }
 
+
   read: Observable<Action> = createEffect( () =>
       this.actions.pipe(
         ofType(fromActions.Types.READ),
@@ -36,6 +37,10 @@ export class SaveEffectsCompra {
   );
 
 
+
+
+
+
   create: Observable<Action> = createEffect(() =>
     this.actions.pipe(
       ofType(fromActions.Types.CREATE),
@@ -44,7 +49,7 @@ export class SaveEffectsCompra {
         this.httpClient.post<CompraResponse>(`${environment.url}gateway/compra`, request)
           .pipe(
             delay(1000),
-            tap((response: CompraResponse) => {
+            tap(() => {
               this.router.navigate(['compra/list']);
             }),
             map((compra: CompraResponse) => new fromActions.CreateSuccess(compra)),
@@ -57,6 +62,17 @@ export class SaveEffectsCompra {
     )
   );
 
-
+  fetchCompra: Observable<Action> = createEffect(() =>
+  this.actions.pipe(
+    ofType(fromActions.Types.FETCH_COMPRA),
+    switchMap((action: fromActions.FetchCompra) =>
+      this.httpClient.get<CompraResponse>(`${environment.url}gateway/compra/${action.compraId}`)
+        .pipe(
+          map((compra: CompraResponse) => new fromActions.FetchCompraSuccess(compra)),
+          catchError(err => of(new fromActions.FetchCompraError(err.message)))
+        )
+    )
+  )
+);
 
 }

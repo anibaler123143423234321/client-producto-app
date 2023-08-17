@@ -1,74 +1,15 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  &__content {
-    min-height: 150px;
-  }
+  // Estilos para el contenedor, si es necesario
+}
 
-  .mat-form-field {
-    margin-bottom: 20px;
-  }
+.cards-container {
+  // Estilos para el contenedor de las tarjetas
+}
 
-  .cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    width: 100%;
-    margin: 0 100px; /* Agrega margen negativo para compensar el espacio entre las tarjetas */
-  }
+.cards {
+  // Estilos para la lista de tarjetas
+}
 
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .card-item {
-    padding: 3px;
-  }
-
-  .cards__item {
-    display: flex;
-    padding: 1rem;
-  }
-
-  .example-card {
-    max-width: 400px;
-  }
-
-  mat-card-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  mat-card img {
-    object-fit: cover;
-    width: 100%;
-    height: 60%;
-  }
-
-  mat-card-content {
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  mat-card-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-  }
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-
-    button {
-      margin: 0 10px;
-    }
-  }
+.cards__item {
+  // Estilos para cada tarjeta individual
 }

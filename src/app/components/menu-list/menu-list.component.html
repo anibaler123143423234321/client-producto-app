@@ -26,10 +26,7 @@
     <span class="navegacion-list-label">Nuevo Producto</span>
   </a>
 
-  <a *ngIf="isAdmin()" mat-list-item (click)="closeMenu()" routerLink="compra/nuevo">
-    <mat-icon>add</mat-icon>
-    <span class="navegacion-list-label">Nueva Compra</span>
-  </a>
+
 
   <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()" routerLink="producto/list">
     <mat-icon>add</mat-icon>
