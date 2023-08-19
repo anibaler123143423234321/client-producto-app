@@ -22,19 +22,19 @@ export class SaveEffectsCompra {
   ) { }
 
 
-  read: Observable<Action> = createEffect( () =>
-      this.actions.pipe(
-        ofType(fromActions.Types.READ),
-        switchMap( () =>
-          this.httpClient.get<CompraResponse[]>(`${environment.url}gateway/compra`)
-          .pipe(
-            delay(1000),
-            map((compras: CompraResponse[]) => new fromActions.ReadSuccess(compras) ),
-            catchError(err => of(new fromActions.ReadError(err.message)))
-          )
+  read: Observable<any> = createEffect(() =>
+  this.actions.pipe(
+    ofType(fromActions.Types.READ),
+    switchMap(() =>
+      this.httpClient.get<CompraResponse[]>(`${environment.url}gateway/compra`)
+        .pipe(
+          delay(1000),
+          map((compras: CompraResponse[]) => new fromActions.ReadSuccess(compras)),
+          catchError(err => of(new fromActions.ReadError(err.message)))
         )
-      )
-  );
+    )
+  )
+);
 
 
 

@@ -27,7 +27,11 @@
             </mat-card-content>
             <mat-card-actions>
               <button mat-button>Ver</button>
-              <button mat-button [routerLink]="['../nuevaCompra', producto.id]" routerLinkActive="active">Comprar</button>
+              <!-- <button mat-button [routerLink]="['../../compra/nuevaCompra', producto.id]" routerLinkActive="active">Comprar</button> -->
+
+              <!-- <li><a>{{ user ? user.nombre + ' ' + user.apellido : null}}</a></li> -->
+
+              <button mat-button [routerLink]="['../../compra/nuevaCompra', producto.id, producto.nombre, producto.precio, userId, nombreUsuario, apellidoUsuario ]" routerLinkActive="active">Comprar</button>
             </mat-card-actions>
           </mat-card>
         </ng-container>

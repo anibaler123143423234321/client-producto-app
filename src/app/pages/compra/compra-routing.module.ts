@@ -4,12 +4,12 @@ import { AuthGuard } from '@app/guards/auth/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'nuevo',
+    path: 'nuevaCompra/:productoId/:nombreProducto/:precioProducto/:userId/:nombreUsuario/:apellidoUsuario ',
     loadChildren: () => import('./pages/compra-nuevo/compra-nuevo.module').then(m=>m.CompraNuevoModule),
     canActivate:[AuthGuard]
   },
   {
-    path: "list",
+    path: "listCompra",
     loadChildren: () => import("./pages/compra-list/compra-list.module").then(m=>m.CompraListModule),
     canActivate: [AuthGuard]
   }

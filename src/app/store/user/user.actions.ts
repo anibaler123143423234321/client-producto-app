@@ -21,9 +21,20 @@ export enum Types {
   SIGIN_OUT_EMAIL_SUCCESS = '[User] Logout: Success',
   SIGIN_OUT_EMAIL_ERROR = '[User] Logout: Error',
 
+  CREATE = '[User] Create: Start',
+  CREATE_SUCCESS = '[User] Create: Success',
+  CREATE_ERROR = '[User] Create: Error',
+
+  READ = '[User] Read',
+  READ_SUCCESS = '[User] Read:Success',
+  READ_ERROR = '[User] Read:Error',
+
   FETCH_USER = '[User] Obtener Usuario',
   FETCH_USER_SUCCESS = '[User] Obtener Usuario Éxito',
   FETCH_USER_ERROR = '[User] Obtener Usuario Error',
+
+
+
 }
 
 //INIT -> EL USUARIO ESTA EN SESION?
@@ -113,6 +124,36 @@ export class FetchUserError implements Action {
   constructor(public error: string) {}
 }
 
+export class Read implements Action {
+  readonly type = Types.READ;
+  constructor(){}
+}
+
+export class ReadSuccess implements Action {
+  readonly type = Types.READ_SUCCESS;
+  constructor(public users: UserResponse[]){}
+}
+
+export class ReadError implements Action {
+  readonly type = Types.READ_ERROR;
+  constructor(public error: string){}
+}
+
+export class Create implements Action {
+  readonly type = Types.CREATE;
+  constructor(public user: UserCreateRequest){}
+}
+
+export class CreateSuccess implements Action {
+  readonly type = Types.CREATE_SUCCESS;
+  constructor(public user: UserResponse){}
+}
+
+export class CreateError implements Action {
+  readonly type = Types.CREATE_ERROR;
+  constructor(public error: string) {}
+}
+
 export type All =
         Init
       | InitAuthorized
@@ -129,4 +170,10 @@ export type All =
       | SignOutError
       | FetchUser
       | FetchUserSuccess
-      | FetchUserError;
+      | FetchUserError
+      | Read
+      | ReadSuccess
+      | ReadError
+      | Create
+      | CreateSuccess
+      | CreateError;

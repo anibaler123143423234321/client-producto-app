@@ -3,6 +3,8 @@ import * as fromActions from './user.actions';
 
 export interface UserState {
   entity : UserResponse | null;
+  users: UserResponse[] | null;
+  user: UserResponse | null;
   id : string | null;
   email : string | null;
   loading: boolean | null;
@@ -12,6 +14,8 @@ export interface UserState {
 
 const initialState : UserState = {
   entity: null,
+  users: null,
+  user:null,
   id: null,
   email: null,
   loading: null,
@@ -75,6 +79,31 @@ export function reducer(state = initialState, action: fromActions.All | any) : U
 
         case fromActions.Types.SIGIN_OUT_EMAIL_ERROR: {
           return {...state, loading: false, entity: null, email: null, error: action.error};
+        }
+
+        case fromActions.Types.CREATE: {
+          return {...state, loading: true, error: null}
+        }
+
+
+        case fromActions.Types.CREATE_SUCCESS: {
+          return {...state, loading: false, error: null, user: action.user}
+        }
+
+        case fromActions.Types.CREATE_ERROR : {
+          return  {...state, loading: false, error: action.error}
+        }
+
+        case fromActions.Types.READ: {
+          return {...state, loading: true, error: null}
+        }
+
+        case fromActions.Types.READ_SUCCESS: {
+          return {...state, loading: false, users: action.users}
+        }
+
+        case fromActions.Types.READ_ERROR: {
+          return  {...state, loading: false, error: action.error}
         }
 
         default: {

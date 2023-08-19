@@ -1,25 +1,32 @@
+<!-- compra-nuevo.component.html -->
+<form>
 
-  <form>
-    <mat-form-field>
-      <mat-label>Nombre de Usuario</mat-label>
-      <input matInput [value]="nombreUsuario" disabled>
-    </mat-form-field>
+<mat-form-field>
+  <mat-label>Nombre de Usuario</mat-label>
+  <input matInput [value]="nombreUsuario + ' ' + apellidoUsuario" disabled>
+</mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Nombre del Producto</mat-label>
-      <input matInput [value]="nombreProducto" disabled>
-    </mat-form-field>
+<mat-form-field>
+  <mat-label>Nombre del Producto</mat-label>
+  <input matInput [value]="nombreProducto" disabled>
+</mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Título</mat-label>
-      <input matInput [(ngModel)]="titulo" name="titulo" required>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Título</mat-label>
+    <input matInput [(ngModel)]="titulo" name="titulo" required>
+  </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Cantidad</mat-label>
-      <input matInput type="number" [(ngModel)]="cantidad" name="cantidad" required>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Cantidad</mat-label>
+    <input matInput type="number" [(ngModel)]="cantidad" name="cantidad" required>
+  </mat-form-field>
 
-    <button mat-button (click)="realizarCompra()">Realizar Compra</button>
-  </form>
+  <mat-form-field>
+    <mat-label>Precio</mat-label>
+    <input matInput [(ngModel)]="precio" name="precio" disabled>
+  </mat-form-field>
 
+  <!-- Agrega más campos aquí según tus necesidades, como dirección y picture -->
+
+  <button mat-button type="submit">Realizar Compra</button>
+</form>

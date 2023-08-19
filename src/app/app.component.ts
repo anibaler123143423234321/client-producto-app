@@ -6,6 +6,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as fromRoot from './store';
 import * as fromUser from './store/user';
+import { GeneralService } from './services/general.service';
 
 
 @Component({
@@ -23,12 +24,14 @@ export class AppComponent implements OnInit{
   constructor(private fs: AngularFirestore,
     private notification: NotificationService,
     private store: Store<fromRoot.State>,
-    private router: Router
+    private router: Router,
+    private GeneralService: GeneralService
     ){}
 
   ngOnInit(){
 
     this.user$ = this.store.pipe(select(fromUser.getUser)) as Observable<fromUser.UserResponse>;
+    // this.GeneralService.usuario$=this.user$;
     this.isAuthorized$ = this.store.pipe(select(fromUser.getIsAuthorized)) as Observable<boolean>;
 
     this.store.dispatch(new fromUser.Init());

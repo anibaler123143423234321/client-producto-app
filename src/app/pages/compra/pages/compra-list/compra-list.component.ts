@@ -22,16 +22,19 @@ export class CompraListComponent implements OnInit {
     private store: Store<fromRoot.State>
   ) { }
 
+// En el ngOnInit() de CompraListComponent
+ngOnInit(): void {
+  this.store.dispatch(new fromList.Read());
+  this.loading$ = this.store.pipe(select(fromList.getLoading));
+  this.compras$ = this.store.pipe(select(fromList.getCompras));
 
-  ngOnInit(): void {
-    this.store.dispatch(new fromList.Read());
-    this.loading$ = this.store.pipe(select(fromList.getLoading));
-    this.compras$ = this.store.pipe(select(fromList.getCompras));
-    this.compras$.subscribe(compras => {
-      console.log("Compras:",compras)
-      this.comprasLength = compras?.length;
-    });
-  }
+  // Puedes agregar logs para verificar la carga de datos
+  this.compras$.subscribe(compras => {
+    console.log("Compras:", compras); // Verifica si las compras se están obteniendo correctamente
+    this.comprasLength = compras?.length || 0; // Asegúrate de manejar el caso de "compras" siendo null
+  });
+}
+
 
   get paginatedCompras$(): Observable<CompraResponse[] | null> {
     return this.compras$.pipe(

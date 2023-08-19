@@ -35,6 +35,7 @@ import { EffectsModule } from '@ngrx/effects';
 import {reducers, effects } from './store';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth-interceptor';
+import { RouterModule, Routes } from '@angular/router';
 
 
 const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [];
@@ -43,7 +44,8 @@ const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({
   declarations: [
     AppComponent,
     MenuListComponent,
-    HeaderComponent
+    HeaderComponent,
+
   ],
   imports: [
     FlexLayoutModule,
@@ -68,6 +70,7 @@ const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({
     MatListModule,
     MatButtonModule,
     StoreDevtools,
+
     StoreModule.forRoot(reducers, {
       runtimeChecks: {
         strictActionImmutability: true,

@@ -38,7 +38,7 @@
         }
 
         case fromActions.Types.READ_SUCCESS: {
-          return {...state, loading: false, compras: action.compra}
+          return { ...state, loading: false, compras: action.compras };
         }
 
         case fromActions.Types.READ_ERROR: {

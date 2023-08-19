@@ -8,6 +8,7 @@ const routes: Routes = [
     loadChildren: () => import("./pages/producto-nuevo/producto-nuevo.module").then(m=>m.ProductoNuevoModule),
     canActivate: [AuthGuard]
   },
+
   {
     path: "list",
     loadChildren: () => import("./pages/producto-list/producto-list.module").then(m=>m.ProductoListModule),

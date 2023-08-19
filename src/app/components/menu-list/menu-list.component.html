@@ -27,13 +27,12 @@
   </a>
 
 
-
   <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()" routerLink="producto/list">
     <mat-icon>add</mat-icon>
     <span class="navegacion-list-label">Listado de Productos</span>
   </a>
 
-  <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()" routerLink="compra/list">
+  <a *ngIf="isAuthorized" mat-list-item (click)="closeMenu()" routerLink="compra/listCompra">
     <mat-icon>add</mat-icon>
     <span class="navegacion-list-label">Listado de Compras</span>
   </a>

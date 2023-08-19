@@ -8,6 +8,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, switchMap, tap, map } from 'rxjs/operators';
 import * as fromActions from './user.actions';
 import { UserResponse } from './user.models';
+import { GeneralService } from '@app/services/general.service';
 
 type Action = fromActions.All;
 
@@ -17,14 +18,18 @@ export class UserEffects {
     private actions: Actions,
     private router: Router,
     private httpClient: HttpClient,
-    private notification: NotificationService
+    private notification: NotificationService,
+    public GeneralService: GeneralService,
   ) {}
 
   signUpEmail: Observable<Action> = createEffect(() =>
+
     this.actions.pipe(
       ofType(fromActions.Types.SIGN_UP_EMAIL),
       map((action: fromActions.SignUpEmail) => action.user),
       switchMap((userData) =>
+        // console.log('User:',userData);
+
         this.httpClient
           .post<UserResponse>(
             `${environment.url}api/authentication/sign-up`,
@@ -33,6 +38,7 @@ export class UserEffects {
           .pipe(
             tap((response: UserResponse) => {
               localStorage.setItem('token', response.token);
+
               this.router.navigate(['/']);
             }),
             map(
@@ -95,9 +101,11 @@ export class UserEffects {
             .get<UserResponse>(`${environment.url}api/user`)
             .pipe(
               tap((user: UserResponse) => {
+                this.GeneralService.usuario$ = user;
                 console.log(
                   'data del usuario en sesion que viene del servidor=>',
-                  user
+                  // user
+                  this.GeneralService.usuario$
                 );
               }),
               map(
