@@ -50,7 +50,7 @@ export class SaveEffectsCompra {
           .pipe(
             delay(1000),
             tap(() => {
-              this.router.navigate(['compra/list']);
+              this.router.navigate(['compra/listCompra']);
             }),
             map((compra: CompraResponse) => new fromActions.CreateSuccess(compra)),
             catchError(err => {

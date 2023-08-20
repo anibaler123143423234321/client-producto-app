@@ -1,0 +1,25 @@
+/* compra-nuevo.component.scss */
+
+/* Estilos para el formulario */
+form {
+  margin-top: 20px; /* Margen superior para separar del mensaje de compra realizada */
+  background-color: #f7f7f7; /* Fondo del formulario */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Estilos para el mensaje de compra realizada */
+.compra-realizada {
+  background-color: #4caf50; /* Color de fondo del mensaje */
+  color: white; /* Color del texto del mensaje */
+  padding: 10px;
+  margin-top: 10px; /* Margen superior para separar del formulario */
+  border-radius: 5px;
+}
+
+/* Estilos para el nombre del producto */
+.nombre-producto {
+  font-weight: bold; /* Texto en negrita */
+  margin-top: 10px; /* Margen superior para separar del formulario */
+}

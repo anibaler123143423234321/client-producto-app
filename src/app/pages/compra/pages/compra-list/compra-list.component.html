@@ -1,19 +1,30 @@
 <section class="container">
-  <div class="cards-container">
+  <div class="grid-container">
     <ul class="cards">
-      <li class="cards__item" *ngFor="let compra of paginatedCompras$ | async">
+      <li class="cards__item card-item" *ngFor="let compra of paginatedCompras$ | async">
         <!-- Asegúrate de que "compra" no sea null o undefined -->
         <div *ngIf="compra">
-          <h3>ID: {{ compra.id }}</h3>
-          <p>Usuario ID: {{ compra.userId }}</p>
+          <h3>Nombres del Usuario: {{ nombreUsuario + ' ' + apellidoUsuario }}</h3>
           <p>Producto ID: {{ compra.productoId }}</p>
           <p>Título: {{ compra.titulo }}</p>
           <p>Precio: {{ compra.precio }}</p>
-          <p>Fecha de Compra: {{ compra.fechaCompra }}</p>
+          <p>Fecha de Compra: {{ compra.fechaCompra | date:'yyyy-MM-dd' }}</p>
           <p>Cantidad: {{ compra.cantidad }}</p>
         </div>
       </li>
     </ul>
   </div>
-</section>
 
+  <div class="pagination">
+    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1">Anterior</button>
+    <span>Página {{ currentPage }}</span>
+    <button
+      mat-button
+      (click)="changePage(1)"
+      [disabled]="(currentPage * itemsPerPage) >= (comprasLength !== undefined ? comprasLength : 0)"
+      *ngIf="comprasLength !== undefined"
+    >
+      Siguiente
+    </button>
+  </div>
+</section>

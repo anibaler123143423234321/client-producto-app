@@ -4,6 +4,8 @@ import { Observable, map } from 'rxjs';
 import * as fromList from '../../store/save';
 import { CompraResponse } from '../../store/save';
 import * as fromRoot from '@app/store';
+import { GeneralService } from '@app/services/general.service';
+
 
 @Component({
   selector: 'app-compra-list',
@@ -15,24 +17,39 @@ export class CompraListComponent implements OnInit {
   loading$ ! : Observable<boolean | null>
   comprasLength: number | undefined;
 
+  nombreUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
+  apellidoUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
+
   currentPage = 1;
-  itemsPerPage = 10;
+  itemsPerPage = 15; // Cambiar a 15 compras por página
 
   constructor(
-    private store: Store<fromRoot.State>
+    private store: Store<fromRoot.State>,
+    public GeneralService: GeneralService,
   ) { }
 
 // En el ngOnInit() de CompraListComponent
 ngOnInit(): void {
+
+
+
   this.store.dispatch(new fromList.Read());
   this.loading$ = this.store.pipe(select(fromList.getLoading));
   this.compras$ = this.store.pipe(select(fromList.getCompras));
 
   // Puedes agregar logs para verificar la carga de datos
   this.compras$.subscribe(compras => {
-    console.log("Compras:", compras); // Verifica si las compras se están obteniendo correctamente
     this.comprasLength = compras?.length || 0; // Asegúrate de manejar el caso de "compras" siendo null
   });
+
+  this.nombreUsuario = this.GeneralService.usuario$?.nombre;
+
+
+  this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
+  console.log('Nombre Usuario:',this.nombreUsuario);
+
+  console.log('Apellido Usuario:',this.apellidoUsuario);
+
 }
 
 

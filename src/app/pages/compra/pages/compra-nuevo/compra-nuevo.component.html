@@ -1,15 +1,13 @@
-<!-- compra-nuevo.component.html -->
-<form>
+<div *ngIf="compraRealizada" class="compra-realizada">
+  Compra realizada
+</div>
 
-<mat-form-field>
-  <mat-label>Nombre de Usuario</mat-label>
-  <input matInput [value]="nombreUsuario + ' ' + apellidoUsuario" disabled>
-</mat-form-field>
+<!-- Agrega un elemento div para mostrar el nombre del producto -->
+<div *ngIf="nombreProducto" class="nombre-producto">
+  Nombre del Producto: {{ nombreProducto }}
+</div>
 
-<mat-form-field>
-  <mat-label>Nombre del Producto</mat-label>
-  <input matInput [value]="nombreProducto" disabled>
-</mat-form-field>
+<form (ngSubmit)="realizarCompra()">
 
   <mat-form-field>
     <mat-label>Título</mat-label>
@@ -25,8 +23,6 @@
     <mat-label>Precio</mat-label>
     <input matInput [(ngModel)]="precio" name="precio" disabled>
   </mat-form-field>
-
-  <!-- Agrega más campos aquí según tus necesidades, como dirección y picture -->
 
   <button mat-button type="submit">Realizar Compra</button>
 </form>

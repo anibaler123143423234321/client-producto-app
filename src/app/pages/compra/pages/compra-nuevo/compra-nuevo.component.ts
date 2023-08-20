@@ -24,6 +24,7 @@ export class CompraNuevoComponent implements OnInit {
   apellidoUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
   productoId: number = 0;
   precio: number = 0; // Declare the precio property
+  compraRealizada: boolean = false; // Variable para mostrar el mensaje de compra realizada
 
   constructor(
     private store: Store,
@@ -51,7 +52,7 @@ export class CompraNuevoComponent implements OnInit {
   // }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.params.subscribe((params) => {
       const productoId = +this.route.snapshot.params['productoId'];
       const userId = +this.route.snapshot.params['userId'];
       const nombreProducto = this.route.snapshot.params['nombreProducto'];
@@ -73,6 +74,7 @@ export class CompraNuevoComponent implements OnInit {
       this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
       this.precio = precioProducto;
 
+      console.log('Parámetros de la URL:', params);
 
       console.log('IDProducto:', this.route.snapshot.params['productoId']);
       console.log('IDUser:', this.route.snapshot.params['userId']);
@@ -93,19 +95,23 @@ export class CompraNuevoComponent implements OnInit {
   }
 
   realizarCompra() {
-    console.log('Realizar Compra clickeado');
     const compra: CompraCreateRequest = {
       titulo: this.titulo,
       cantidad: this.cantidad,
       productoId: this.productoId,
       userId: this.userId,
-      precio: this.precio, // Use the assigned precio property
+      precio: this.precio,
     };
 
     // Llama al servicio para guardar la compra en el backend
     this.store.dispatch(new fromActions.Create(compra));
 
-    // Redirige al usuario a la lista de compras (esto también se hace en el efecto)
-    this.router.navigate(['/compra/list']);
+    // Marca la compra como realizada y muestra el mensaje
+    this.compraRealizada = true;
+
+    // Limpia los campos después de realizar la compra
+    this.titulo = '';
+    this.cantidad = 0;
+
   }
 }
