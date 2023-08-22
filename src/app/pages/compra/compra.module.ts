@@ -17,8 +17,3 @@ import { CompraListModule } from './pages/compra-list/compra-list.module';
   ]
 })
 export class CompraModule {}
-
-
-
-
-

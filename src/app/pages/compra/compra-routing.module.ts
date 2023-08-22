@@ -12,6 +12,11 @@ const routes: Routes = [
     path: "listCompra",
     loadChildren: () => import("./pages/compra-list/compra-list.module").then(m=>m.CompraListModule),
     canActivate: [AuthGuard]
+  },
+  {
+    path: "final",
+    loadChildren: () => import("./pages/compra-final/compra-list.module").then(m=>m.CompraFinalModule),
+    canActivate: [AuthGuard]
   }
 ];
 

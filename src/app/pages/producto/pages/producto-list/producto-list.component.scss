@@ -16,7 +16,26 @@
     width: 100%;
     margin: 0 100px; /* Agrega margen negativo para compensar el espacio entre las tarjetas */
   }
+  .comprar-btn {
+    display: flex;
+    align-items: center;
+  }
 
+  .mat-icon {
+    font-size: 24px; /* Ajusta el tamaño del ícono según tus preferencias */
+    margin-right: 5px; /* Agrega un espacio entre el ícono y el contador */
+  }
+
+  .cart-item-count {
+    font-weight: bold; /* Puedes hacer que el contador sea más visible con negrita */
+    margin-right: 10px; /* Ajusta el espacio entre el contador y el texto "Ir a Comprar" */
+  }
+
+  .go-to-cart {
+    cursor: pointer; /* Haz que el texto "Ir a Comprar" sea interactivo */
+    color: blue;
+    text-decoration: underline;
+  }
   .cards {
     display: flex;
     flex-wrap: wrap;
@@ -71,4 +90,40 @@
       margin: 0 10px;
     }
   }
+}
+/* Estilos para la ventana emergente */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.popup img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Estilos para el botón "Ver" */
+.ver-button {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
 }

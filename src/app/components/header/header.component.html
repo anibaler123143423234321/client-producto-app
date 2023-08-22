@@ -13,6 +13,7 @@
       <li><a *ngIf="!isAuthorized" routerLink="auth/login"> Login </a></li>
       <li><a *ngIf="isAuthorized"  routerLink="/"> Home </a></li>
       <li (click)="onSignOut()"><a *ngIf="isAuthorized" routerLink="/" > Salir </a></li>
+
     </ul>
   </div>
 

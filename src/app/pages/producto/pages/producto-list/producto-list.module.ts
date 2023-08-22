@@ -9,7 +9,7 @@
   import { MatFormFieldModule } from '@angular/material/form-field'; // Asegúrate de que esto esté importado
   import { MatSelectModule } from '@angular/material/select'; // Asegúrate de que esto esté importado
   import { MatToolbarModule } from '@angular/material/toolbar'; // Importa MatToolbarModule
-
+  import {MatIconModule} from '@angular/material/icon';
 
   @NgModule({
     declarations: [
@@ -18,7 +18,7 @@
     imports: [
       CommonModule,
       ProductoListRoutingModule,
-
+      MatIconModule,
 
       SpinnerModule,
       MatButtonModule,

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from '@app/models/backend/user/index';
+import { CarritoService } from '@app/services/CarritoService';
 
 @Component({
   selector: 'app-menu-list',
@@ -13,16 +14,23 @@ export class MenuListComponent implements OnInit {
   @Input() user: User | null = null;
   @Output() signOut = new EventEmitter<void>();
 
-  constructor() { }
+  constructor(private carritoService: CarritoService) {}
 
   ngOnInit(): void {
   }
 
   closeMenu() : void {
-    this.menuToggle.emit();
+
+  // Emitir el evento para cerrar el menú
+  this.menuToggle.emit();
+
+  // Limpiar el carrito después de que se complete la navegación y la vista se haya ocultado
+  this.carritoService.clearCart();
   }
 
   onSignOut(): void {
+
+    // Emitir el evento para cerrar sesión
     this.signOut.emit();
   }
 

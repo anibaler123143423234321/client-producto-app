@@ -8,8 +8,9 @@ import { UserResponse } from '@app/store/user';
 })
 export class GeneralService {
 
+  arrayCompra: any[] = []
 
-  usuario$! : UserResponse | null;
+  usuario$! : UserResponse ;
 
   constructor() { }
 

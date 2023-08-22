@@ -36,7 +36,7 @@ import {reducers, effects } from './store';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth-interceptor';
 import { RouterModule, Routes } from '@angular/router';
-
+import { CarritoService } from './services/CarritoService';
 
 const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [];
 
@@ -81,7 +81,9 @@ const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({
     HttpClientModule,
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    [CarritoService], // Proporciona el servicio aquí
+
   ],
   bootstrap: [AppComponent]
 })
