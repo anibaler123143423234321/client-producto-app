@@ -1,21 +1,25 @@
-  <h2>Carrito de Compras</h2>
-  <!-- En compra-final.component.html -->
-  <button mat-button (click) ="regresarAListado()">Regresar al Listado de Productos</button>
+<h2>Carrito de Compras</h2>
 
-  <table *ngIf="mostrarTabla">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio</th>
-      </tr>
-    </thead>
+<button mat-button (click)="regresarAListado()">Regresar al Listado de Productos</button>
 
-    <tbody>
+<!-- Agrega un botón para realizar la compra -->
+<button mat-button (click)="realizarCompras()">Realizar Compra</button>
+
+<table *ngIf="mostrarTabla">
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+    </tr>
+  </thead>
+
+  <tbody>
     <tr *ngFor="let compra of arrayCompra">
-        <td>{{ compra.titulo }}</td>
-        <td>{{ compra.cantidad }}</td>
-        <td>{{ compra.precio }}</td>
-      </tr>
-    </tbody>
-  </table>
+      <td>{{ compra.titulo }}</td>
+      <td>{{ compra.cantidad }}</td>
+      <td>{{ compra.precio }}</td>
+
+    </tr>
+  </tbody>
+</table>

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
 import { GeneralService } from '@app/services/general.service';
 import * as fromActions from '../../store/save'; // Importa la acción Create
-
+import { CarritoService } from '@app/services/CarritoService';
 import * as fromProductoEffects from '@app/pages/producto/store/save';
 import * as fromUserEffects from '@app/store/user';
 import { CompraCreateRequest } from '../../store/save'; // Asegúrate de importar correctamente el modelo CompraCreateRequest
@@ -20,7 +20,6 @@ export class CompraNuevoComponent implements OnInit {
   cantidad: number = 0;
   nombreProducto: string = '';
   nombreUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
-
   apellidoUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
   productoId: number = 0;
   precio: number = 0; // Declare the precio property
@@ -31,7 +30,8 @@ export class CompraNuevoComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
-    public GeneralService: GeneralService
+    public GeneralService: GeneralService,
+    public CarritoService: CarritoService
 
   ) {}
 
@@ -57,9 +57,9 @@ export class CompraNuevoComponent implements OnInit {
       const userId = +this.route.snapshot.params['userId'];
       const nombreProducto = this.route.snapshot.params['nombreProducto'];
       const nombreUsuario = this.route.snapshot.params['nombreUsuario'];
-
       const apellidoUsuario = this.route.snapshot.params['apellidoUsuario'];
       const precioProducto = +this.route.snapshot.params['precioProducto'];
+      const estadoCompra = this.route.snapshot.params['estadoCompra'];
 
       if (isNaN(productoId) || isNaN(precioProducto) ) {
         console.log('Valores no válidos en la URL');
@@ -95,16 +95,23 @@ export class CompraNuevoComponent implements OnInit {
   }
 
   realizarCompra() {
+
+    const estadoCompra = 'Pendiente Por Revisar';
+
+
     const compra: CompraCreateRequest = {
       titulo: this.titulo,
       cantidad: this.cantidad,
       productoId: this.productoId,
       userId: this.userId,
       precio: this.precio,
+      estadoCompra: estadoCompra, // Establece el estado de compra
+
     };
 
-    // Llama al servicio para guardar la compra en el backend
+     // Llama al servicio para guardar la compra en el backend
     this.store.dispatch(new fromActions.Create(compra));
+
 
     // Marca la compra como realizada y muestra el mensaje
     this.compraRealizada = true;

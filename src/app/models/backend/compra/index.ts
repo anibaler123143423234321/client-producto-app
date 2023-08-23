@@ -6,4 +6,5 @@ export interface Compra {
   precio: number; // Cambiado a número para representar el precio
   fechaCompra: Date; // Cambiado a Date para representar la fecha
   cantidad: number; // Cambiado a número para representar la cantidad
+  estadoCompra: string;
 }

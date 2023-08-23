@@ -94,12 +94,17 @@ export class ProductoListComponent implements OnInit {
   }
 
   addCarrito(IDProducto: number, precioProducto: any, nombreProducto: any) {
+
+    const estadoCompra = 'Pendiente Por Revisar';
+
     let compra: CompraCreateRequest = {
       titulo: nombreProducto,
       cantidad: 1, // Inicializa la cantidad en 1
       productoId: IDProducto,
       userId: this.userId,
       precio: precioProducto,
+      estadoCompra: estadoCompra, // Establece el estado de compra
+
     };
 
     // Busca si el producto ya está en el carrito
@@ -118,6 +123,7 @@ export class ProductoListComponent implements OnInit {
         productoId: IDProducto,
         userId: this.userId,
         precio: precioProducto,
+        estadoCompra : estadoCompra
       };
 
       this.arrayCompra.push(compra);
