@@ -45,6 +45,17 @@
           return  {...state, loading: false, error: action.error}
         }
 
+        case fromActions.Types.UPDATE_ESTADO_SUCCESS: {
+          // Actualiza el estado de la compra en el estado local
+          const updatedCompras = state.compras?.map(compra => {
+            if (compra.id === action.updatedCompra.id) {
+              return { ...compra, estadoCompra: action.updatedCompra.estadoCompra };
+            }
+            return compra;
+          }) || null;
+
+          return { ...state, loading: false, error: null, compras: updatedCompras };
+        }
 
         default: {
           return state;

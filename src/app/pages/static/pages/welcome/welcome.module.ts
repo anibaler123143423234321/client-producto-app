@@ -5,6 +5,7 @@ import { WelcomeRoutingModule } from './welcome-routing.module';
 import { WelcomeComponent } from './welcome.component';
 import {MatCardModule } from '@angular/material/card';
 
+
 @NgModule({
   declarations: [
     WelcomeComponent

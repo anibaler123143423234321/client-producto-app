@@ -22,6 +22,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatFormFieldModule,
     MatToolbarModule,
     MatSelectModule
+
   ]
 })
 export class CompraListModule {}

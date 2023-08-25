@@ -104,7 +104,7 @@ export class CompraNuevoComponent implements OnInit {
       cantidad: this.cantidad,
       productoId: this.productoId,
       userId: this.userId,
-      precio: this.precio,
+      precioCompra: this.precio,
       estadoCompra: estadoCompra, // Establece el estado de compra
 
     };

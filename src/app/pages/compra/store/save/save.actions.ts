@@ -14,6 +14,9 @@ export enum Types {
   FETCH_COMPRA_SUCCESS = '[Compra] Obtener Compra Éxito',
   FETCH_COMPRA_ERROR = '[Compra] Obtener Compra Error',
 
+  UPDATE_ESTADO = '[Compra] Update Estado',
+  UPDATE_ESTADO_SUCCESS = '[Compra] Update Estado Success',
+  UPDATE_ESTADO_ERROR = '[Compra] Update Estado Error'
 }
 
 export class Read implements Action {
@@ -60,6 +63,21 @@ export class FetchCompraError implements Action {
   constructor(public error: string) {}
 }
 
+export class UpdateEstado implements Action {
+  readonly type = Types.UPDATE_ESTADO;
+  constructor(public compraId: number, public estadoCompra: string) {}
+}
+
+export class UpdateEstadoSuccess implements Action {
+  readonly type = Types.UPDATE_ESTADO_SUCCESS;
+  constructor(public updatedCompra: CompraResponse) {}
+}
+
+export class UpdateEstadoError implements Action {
+  readonly type = Types.UPDATE_ESTADO_ERROR;
+  constructor(public error: string) {}
+}
+
 export type All =
   Read
   | ReadSuccess
@@ -69,4 +87,7 @@ export type All =
   | CreateError
   | FetchCompra
   | FetchCompraSuccess
-  | FetchCompraError;
+  | FetchCompraError
+  | UpdateEstado
+  | UpdateEstadoSuccess
+  | UpdateEstadoError;;

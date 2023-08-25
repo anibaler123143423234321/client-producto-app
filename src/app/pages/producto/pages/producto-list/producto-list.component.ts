@@ -102,7 +102,7 @@ export class ProductoListComponent implements OnInit {
       cantidad: 1, // Inicializa la cantidad en 1
       productoId: IDProducto,
       userId: this.userId,
-      precio: precioProducto,
+      precioCompra: precioProducto,
       estadoCompra: estadoCompra, // Establece el estado de compra
 
     };
@@ -122,7 +122,7 @@ export class ProductoListComponent implements OnInit {
         cantidad: 1, // Inicializa la cantidad en 1
         productoId: IDProducto,
         userId: this.userId,
-        precio: precioProducto,
+        precioCompra: precioProducto,
         estadoCompra : estadoCompra
       };
 

@@ -1,19 +1,23 @@
 <section class="container">
+  <button mat-button (click)="navigateToProductoNuevo()">Regresar al Listado de Productos</button>
+
   <div class="grid-container">
     <ul class="cards">
       <li class="cards__item card-item" *ngFor="let compra of paginatedCompras$ | async">
-        <!-- Asegúrate de que "compra" no sea null o undefined -->
         <div *ngIf="compra">
           <h3>Nombres del Usuario: {{ nombreUsuario + ' ' + apellidoUsuario }}</h3>
           <p>Producto ID: {{ compra.productoId }}</p>
           <p>Título: {{ compra.titulo }}</p>
-          <p>Precio: {{ compra.precio }}</p>
+          <p>Precio: {{ compra.precioCompra }}</p>
           <p>Fecha de Compra: {{ compra.fechaCompra | date:'yyyy-MM-dd' }}</p>
           <p>Cantidad: {{ compra.cantidad }}</p>
           <p>Estado: {{ compra.estadoCompra }}</p>
+          <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
+          <button *ngIf="isAdmin()" (click)="editarEstado(compra)">Editar Estado</button>
         </div>
       </li>
     </ul>
+
   </div>
 
   <div class="pagination">

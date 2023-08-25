@@ -36,11 +36,6 @@ export class SaveEffectsCompra {
   )
 );
 
-
-
-
-
-
   create: Observable<Action> = createEffect(() =>
     this.actions.pipe(
       ofType(fromActions.Types.CREATE),
@@ -74,5 +69,23 @@ export class SaveEffectsCompra {
     )
   )
 );
+
+updateEstado = createEffect(() =>
+this.actions.pipe(
+  ofType(fromActions.Types.UPDATE_ESTADO), // Escucha la acción UpdateEstado
+  switchMap((action: fromActions.UpdateEstado) =>
+    this.httpClient.put<CompraResponse>(`${environment.url}gateway/compra/${action.compraId}`, { estadoCompra: action.estadoCompra })
+      .pipe(
+        tap(() => {
+           this.router.navigate(['compra/listCompra']);
+          console.log('Estado de compra actualizado con éxito');
+        }),
+        map((updatedCompra: CompraResponse) => new fromActions.UpdateEstadoSuccess(updatedCompra)),
+        catchError(err => of(new fromActions.UpdateEstadoError(err.message)))
+      )
+  )
+)
+);
+
 
 }
