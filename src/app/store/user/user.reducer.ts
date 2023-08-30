@@ -106,6 +106,18 @@ export function reducer(state = initialState, action: fromActions.All | any) : U
           return  {...state, loading: false, error: action.error}
         }
 
+        case fromActions.Types.LIST_USERS: {
+          return { ...state, loading: true, error: null };
+        }
+
+        case fromActions.Types.LIST_USERS_SUCCESS: {
+          return { ...state, loading: false, users: action.users, error: null };
+        }
+
+        case fromActions.Types.LIST_USERS_ERROR: {
+          return { ...state, loading: false, error: action.error };
+        }
+
         default: {
           return state;
         }

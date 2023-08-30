@@ -1,0 +1,65 @@
+<div class="search-container">
+  <label for="searchInput">Buscar usuarios</label>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Escribe aquí..."
+    [(ngModel)]="searchTerm"
+    (input)="updateFilteredUsers()"
+    class="search-input"
+  />
+</div>
+
+<div *ngIf="loading$ | async; else loadedContent" class="loading-message">
+  Loading...
+</div>
+
+<!-- Tabla de usuarios con filtrado -->
+<!-- Tabla de usuarios con filtrado -->
+<ng-template #loadedContent>
+  <h2>
+    Lista de Usuarios con sus Compras Pendientes Por Revisar y Despachadas
+  </h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Teléfono</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Compras</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filteredUsers">
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.nombre }}</td>
+        <td>{{ user.apellido }}</td>
+        <td>{{ user.telefono }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <!-- ... -->
+        <td>
+          <ul>
+            <li *ngFor="let compra of userComprasMap[user.id]">
+              {{ compra.productoId }} - {{ compra.titulo }} ({{
+                compra.estadoCompra
+              }})
+              <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
+              <button
+                (click)="editarEstado(user, compra)"
+              >
+                Editar Estado
+              </button>
+            </li>
+          </ul>
+        </td>
+        <!-- ... -->
+      </tr>
+    </tbody>
+  </table>
+</ng-template>

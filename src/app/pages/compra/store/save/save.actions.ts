@@ -16,7 +16,14 @@ export enum Types {
 
   UPDATE_ESTADO = '[Compra] Update Estado',
   UPDATE_ESTADO_SUCCESS = '[Compra] Update Estado Success',
-  UPDATE_ESTADO_ERROR = '[Compra] Update Estado Error'
+  UPDATE_ESTADO_ERROR = '[Compra] Update Estado Error',
+
+  READ_ALL = '[Compra] Read All',
+
+}
+
+export class ReadAll implements Action {
+  readonly type = Types.READ_ALL;
 }
 
 export class Read implements Action {

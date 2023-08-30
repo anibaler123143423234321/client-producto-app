@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store'; // Asegúrate de importar Store desde '@ngr
 export class CompraFinalComponent implements OnInit {
   arrayCompra: CompraCreateRequest[] = [];
   mostrarTabla = true; // Agrega esta variable de bandera
+  compraRealizada = false; // Variable de bandera para mostrar el mensaje
 
   constructor(
     private route: ActivatedRoute,
@@ -69,7 +70,15 @@ export class CompraFinalComponent implements OnInit {
       this.store.dispatch(new fromActions.Create(compra));
     });
 
-    // Limpia el arrayCompra después de realizar las compras
+ // Limpia el arrayCompra después de realizar las compras
     this.arrayCompra = [];
-  }
-}
+
+     // Establece la variable compraRealizada en verdadera después de realizar la compra
+     this.compraRealizada = true;
+
+     // Agrega la clase 'mostrar' para que se muestre el mensaje
+     setTimeout(() => {
+       this.compraRealizada = false; // Después de un tiempo, oculta el mensaje
+     }, 3000); // Esto ocultará el mensaje después de 3 segundos, ajusta el valor según tus necesidades
+   }
+ }

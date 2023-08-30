@@ -1,0 +1,15 @@
+/* Estilo para el mensaje de compra realizada */
+.compra-realizada {
+  display: none; /* Oculta el mensaje inicialmente */
+  background-color: green; /* Fondo verde */
+  color: white; /* Texto blanco */
+  padding: 10px; /* Espacio alrededor del mensaje */
+  border-radius: 4px; /* Bordes redondeados */
+  text-align: center; /* Texto centrado */
+  font-size: 18px; /* Tamaño de fuente */
+}
+
+/* Estilo para mostrar el mensaje cuando compraRealizada es verdadero */
+.compra-realizada.mostrar {
+  display: block; /* Muestra el mensaje cuando la clase 'mostrar' está presente */
+}

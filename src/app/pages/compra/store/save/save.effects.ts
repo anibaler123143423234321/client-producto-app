@@ -88,4 +88,18 @@ this.actions.pipe(
 );
 
 
+readAll: Observable<Action> = createEffect(() =>
+  this.actions.pipe(
+    ofType(fromActions.Types.READ_ALL),
+    switchMap(() =>
+      this.httpClient.get<CompraResponse[]>(`${environment.url}gateway/compra/all`)
+        .pipe(
+          delay(1000),
+          map((compras: CompraResponse[]) => new fromActions.ReadSuccess(compras)),
+          catchError(err => of(new fromActions.ReadError(err.message)))
+        )
+    )
+  )
+);
+
 }

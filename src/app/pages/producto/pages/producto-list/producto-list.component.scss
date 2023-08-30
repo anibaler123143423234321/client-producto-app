@@ -1,6 +1,8 @@
+/* Estilos generales para pantallas grandes */
 .container {
   display: flex;
   flex-direction: column;
+
   &__content {
     min-height: 150px;
   }
@@ -16,6 +18,7 @@
     width: 100%;
     margin: 0 100px; /* Agrega margen negativo para compensar el espacio entre las tarjetas */
   }
+
   .comprar-btn {
     display: flex;
     align-items: center;
@@ -36,6 +39,7 @@
     color: blue;
     text-decoration: underline;
   }
+
   .cards {
     display: flex;
     flex-wrap: wrap;
@@ -91,34 +95,27 @@
     }
   }
 }
-/* Estilos para la ventana emergente */
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1;
+
+/* Estilos para pantallas medianas */
+@media screen and (max-width: 768px) {
+  .container {
+    margin: 0 20px; /* Ajusta el margen para pantallas más pequeñas */
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
-.popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  z-index: 2;
-}
+/* Estilos para pantallas pequeñas */
+@media screen and (max-width: 480px) {
+  .container {
+    margin: 0 10px; /* Ajusta aún más el margen para pantallas más pequeñas */
+  }
 
-.popup img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  .cards-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
 }
 
 /* Estilos para el botón "Ver" */
@@ -126,4 +123,15 @@
   cursor: pointer;
   color: blue;
   text-decoration: underline;
+}
+
+/* Resto de tus estilos existentes */
+/* ... */
+
+.success-message {
+  background-color: #4caf50; /* Color de fondo del mensaje */
+  color: white; /* Color del texto del mensaje */
+  padding: 10px;
+  margin-top: 10px; /* Margen superior para separar del formulario */
+  border-radius: 5px;
 }

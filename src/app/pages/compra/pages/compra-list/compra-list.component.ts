@@ -22,7 +22,9 @@ export class CompraListComponent implements OnInit {
   loading$!: Observable<boolean | null>;
   comprasLength: number | undefined;
   @Input() user: User | null = null;
-
+  estadoEditadoExitoso: boolean = false;
+  mensajeExito = '';
+  idUser: number | undefined;
   nombreUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
   apellidoUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
 
@@ -49,10 +51,10 @@ export class CompraListComponent implements OnInit {
     });
 
     this.nombreUsuario = this.GeneralService.usuario$?.nombre;
-
+    this.idUser = this.GeneralService.usuario$?.id
     this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
+    console.log('ID Usuario:', this.idUser);
     console.log('Nombre Usuario:', this.nombreUsuario);
-
     console.log('Apellido Usuario:', this.apellidoUsuario);
   }
 
@@ -89,6 +91,16 @@ export class CompraListComponent implements OnInit {
 
       // Despacha la acción para actualizar el estado de la compra
       this.store.dispatch(new fromActions.UpdateEstado(compraId, nuevoEstado));
+
+      // Establece las variables para mostrar el mensaje de éxito
+      this.estadoEditadoExitoso = true;
+      this.mensajeExito = 'Estado Cambiado con Éxito';
+
+      // Configura un temporizador para ocultar el mensaje después de 5 segundos
+      setTimeout(() => {
+        this.estadoEditadoExitoso = false;
+        this.mensajeExito = '';
+      }, 8000); // 5000 milisegundos = 5 segundos
     } else {
       console.log('Operación de actualización cancelada o estado no válido.');
     }

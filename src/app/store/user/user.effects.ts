@@ -136,4 +136,17 @@ export class UserEffects {
   )
 );
 
+
+listUsers = createEffect(() =>
+this.actions.pipe(
+  ofType(fromActions.Types.LIST_USERS),
+  switchMap(() =>
+    this.httpClient.get<UserResponse[]>(`${environment.url}api/user/listar`).pipe(
+      map((users: UserResponse[]) => new fromActions.ListUsersSuccess(users)),
+      catchError((error) => of(new fromActions.ListUsersError(error.message)))
+    )
+  )
+)
+);
+
 }

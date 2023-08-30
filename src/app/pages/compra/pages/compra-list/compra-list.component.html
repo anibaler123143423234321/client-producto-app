@@ -1,3 +1,7 @@
+<div *ngIf="estadoEditadoExitoso" class="success-message mostrar">
+  {{ mensajeExito }}
+</div>
+
 <section class="container">
   <button mat-button (click)="navigateToProductoNuevo()">Regresar al Listado de Productos</button>
 
@@ -5,6 +9,7 @@
     <ul class="cards">
       <li class="cards__item card-item" *ngFor="let compra of paginatedCompras$ | async">
         <div *ngIf="compra">
+          <h3>ID del Usuario: {{ idUser }}</h3>
           <h3>Nombres del Usuario: {{ nombreUsuario + ' ' + apellidoUsuario }}</h3>
           <p>Producto ID: {{ compra.productoId }}</p>
           <p>Título: {{ compra.titulo }}</p>
@@ -31,5 +36,6 @@
     >
       Siguiente
     </button>
+
   </div>
 </section>

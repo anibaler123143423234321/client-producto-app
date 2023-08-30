@@ -33,7 +33,9 @@ export enum Types {
   FETCH_USER_SUCCESS = '[User] Obtener Usuario Éxito',
   FETCH_USER_ERROR = '[User] Obtener Usuario Error',
 
-
+  LIST_USERS = '[User] Listar Usuarios',
+  LIST_USERS_SUCCESS = '[User] Listar Usuarios Éxito',
+  LIST_USERS_ERROR = '[User] Listar Usuarios Error',
 
 }
 
@@ -154,6 +156,23 @@ export class CreateError implements Action {
   constructor(public error: string) {}
 }
 
+//LISTAR USUARIOS
+
+export class ListUsers implements Action {
+  readonly type = Types.LIST_USERS;
+}
+
+export class ListUsersSuccess implements Action {
+  readonly type = Types.LIST_USERS_SUCCESS;
+  constructor(public users: UserResponse[]) {}
+}
+
+export class ListUsersError implements Action {
+  readonly type = Types.LIST_USERS_ERROR;
+  constructor(public error: string) {}
+}
+
+
 export type All =
         Init
       | InitAuthorized
@@ -176,4 +195,7 @@ export type All =
       | ReadError
       | Create
       | CreateSuccess
-      | CreateError;
+      | CreateError
+      | ListUsers
+      | ListUsersSuccess
+      | ListUsersError;

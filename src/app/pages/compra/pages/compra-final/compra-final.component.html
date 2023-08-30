@@ -5,6 +5,12 @@
 <!-- Agrega un botón para realizar la compra -->
 <button mat-button (click)="realizarCompras()">Realizar Compra</button>
 
+<!-- Muestra un mensaje de "Compra realizada" si la compra se ha realizado -->
+<div *ngIf="compraRealizada" class="compra-realizada mostrar">
+  Compra realizada
+</div>
+
+
 <table *ngIf="mostrarTabla">
   <thead>
     <tr>
@@ -19,7 +25,6 @@
       <td>{{ compra.titulo }}</td>
       <td>{{ compra.cantidad }}</td>
       <td>{{ compra.precioCompra }}</td>
-
     </tr>
   </tbody>
 </table>
