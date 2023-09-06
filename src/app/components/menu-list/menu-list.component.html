@@ -21,7 +21,19 @@
   </a>
 
 
-  <a *ngIf="isAdmin()" mat-list-item (click)="closeMenu()" routerLink="producto/nuevo">
+  <a *ngIf="isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="negocio/nuevo">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Agregar Negocio</span>
+  </a>
+
+
+   <a *ngIf="isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="negocio/list">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Listado de Negocios</span>
+  </a>
+
+
+  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="producto/nuevo">
     <mat-icon>add</mat-icon>
     <span class="navegacion-list-label">Agregar Producto</span>
   </a>
@@ -37,7 +49,7 @@
     <span class="navegacion-list-label">Mis Compras</span>
   </a>
 
-  <a *ngIf="isAdmin()" mat-list-item (click)="closeMenu()" routerLink="user/list">
+  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="user/list">
     <mat-icon>add</mat-icon>
     <span class="navegacion-list-label">Ver Usuario-Compras</span>
   </a>

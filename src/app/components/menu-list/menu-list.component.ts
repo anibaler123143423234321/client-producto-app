@@ -38,4 +38,11 @@ export class MenuListComponent implements OnInit {
     // Verificar si user no es nulo y tiene la propiedad role
     return this.user?.role === 'ADMIN';
   }
+
+  isSuperAdmin(): boolean {
+    // Verificar si user no es nulo y tiene la propiedad role
+    return this.user?.role === 'SUPERADMIN';
+  }
+
+
 }
