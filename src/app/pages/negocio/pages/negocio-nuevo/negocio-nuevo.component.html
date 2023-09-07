@@ -1,0 +1,53 @@
+<app-spinner *ngIf="loading$ | async"></app-spinner>
+
+<mat-toolbar color="secondary">
+  <span>Registrar Nuevo Negocio</span>
+</mat-toolbar>
+
+<section fxLayoutAlign="center">
+  <mat-card>
+    <form
+      fxLayout="column"
+      fxLayoutAlign="center center"
+      #f="ngForm"
+      (ngSubmit)="registrarNegocio(f)"
+      fxLayoutGap="10px"
+    >
+
+      <mat-form-field>
+        <mat-label>Nombre del Negocio</mat-label>
+        <input
+          type="text"
+          ngModel
+          name="nombre"
+          required
+          placeholder="Ingrese Nombre del Negocio"
+          matInput
+        />
+        <mat-error>Debe ingresar un nombre para el negocio</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Dirección</mat-label>
+        <input
+          type="text"
+          ngModel
+          name="direccion"
+          required
+          placeholder="Ingrese la Dirección del Negocio"
+          matInput
+        />
+        <mat-error>Debe ingresar la dirección del negocio</mat-error>
+      </mat-form-field>
+
+      <button
+        type="submit"
+        mat-raised-button
+        color="primary"
+        [disabled]="f.invalid"
+      >
+        Registrar Negocio
+      </button>
+    </form>
+  </mat-card>
+</section>

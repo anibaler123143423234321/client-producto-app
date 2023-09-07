@@ -3,39 +3,55 @@
 </div>
 
 <section class="container">
-  <button mat-button (click)="navigateToProductoNuevo()">Regresar al Listado de Productos</button>
+  <button mat-button (click)="navigateToProductoNuevo()">
+    Regresar al Listado de Productos
+  </button>
 
   <div class="grid-container">
     <ul class="cards">
-      <li class="cards__item card-item" *ngFor="let compra of paginatedCompras$ | async">
+      <li
+        class="cards__item card-item"
+        *ngFor="let compra of paginatedCompras$ | async"
+      >
         <div *ngIf="compra">
           <h3>ID del Usuario: {{ idUser }}</h3>
-          <h3>Nombres del Usuario: {{ nombreUsuario + ' ' + apellidoUsuario }}</h3>
+          <h3>
+            Nombres del Usuario: {{ nombreUsuario + " " + apellidoUsuario }}
+          </h3>
           <p>Producto ID: {{ compra.productoId }}</p>
           <p>Título: {{ compra.titulo }}</p>
           <p>Precio: {{ compra.precioCompra }}</p>
-          <p>Fecha de Compra: {{ compra.fechaCompra | date:'yyyy-MM-dd' }}</p>
+          <p>Fecha de Compra: {{ compra.fechaCompra | date : "yyyy-MM-dd" }}</p>
           <p>Cantidad: {{ compra.cantidad }}</p>
           <p>Estado: {{ compra.estadoCompra }}</p>
           <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
-          <button *ngIf="isAdmin()" (click)="editarEstado(compra)">Editar Estado</button>
+          <button *ngIf="isAdmin()" (click)="editarEstado(compra)">
+            Editar Estado
+          </button>
+          <button (click)="generarPDF(compra)">Descargar Boleta</button>
+
         </div>
       </li>
     </ul>
-
   </div>
 
+
+
   <div class="pagination">
-    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1">Anterior</button>
+    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1">
+      Anterior
+    </button>
     <span>Página {{ currentPage }}</span>
     <button
       mat-button
       (click)="changePage(1)"
-      [disabled]="(currentPage * itemsPerPage) >= (comprasLength !== undefined ? comprasLength : 0)"
+      [disabled]="
+        currentPage * itemsPerPage >=
+        (comprasLength !== undefined ? comprasLength : 0)
+      "
       *ngIf="comprasLength !== undefined"
     >
       Siguiente
     </button>
-
   </div>
 </section>

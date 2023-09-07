@@ -1,21 +1,34 @@
 import { Component, OnInit } from '@angular/core';
-import * as fromRoot from '@app/store';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as fromList from '../../store/save';
-import { NegocioResponse } from '../../store/save';
-import { map } from 'rxjs/operators';
-import { UserResponse } from '@app/store/user';
-import { GeneralService } from '@app/services/general.service';
-import { CompraCreateRequest } from '@app/pages/compra/store/save';
-import { Router } from '@angular/router';
-import { CarritoService } from '@app/services/CarritoService';
+import * as fromList from '../../store/save'; // Ajusta la ruta a tus archivos NgRx
+import { NegocioResponse } from '../../store/save'; // Asegúrate de que el tipo sea correcto
+import { NegocioService } from '@app/services/NegocioService';
 
 @Component({
   selector: 'app-negocio-list',
   templateUrl: './negocio-list.component.html',
   styleUrls: ['./negocio-list.component.scss'],
 })
-export class NegocioListComponent  {
 
+export class NegocioListComponent implements OnInit {
+  negocios$!: Observable<NegocioResponse[] | null>; // Asegúrate de que el tipo sea correcto
+
+  constructor(private store: Store<fromList.ListState>,
+    private negocioService: NegocioService) {}
+
+  ngOnInit(): void {
+    this.store.dispatch(new fromList.Read());
+    this.negocios$ = this.store.pipe(select(fromList.getNegocios));
+
+    this.negocios$.subscribe(negocios => {
+      if (negocios !== null) {
+        this.negocioService.setNegocios(negocios);
+        console.log('Negocios:', negocios);
+      } else {
+        console.log('Negocios is null');
+      }
+    });
+
+  }
 }

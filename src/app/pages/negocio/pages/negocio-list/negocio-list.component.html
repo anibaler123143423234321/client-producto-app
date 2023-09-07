@@ -1,0 +1,23 @@
+<!-- negocio-list.component.html -->
+<div class="negocio-list">
+  <h1>Listado de Negocios</h1>
+
+  <!-- Verifica si hay datos de negocios en el estado -->
+  <ng-container *ngIf="negocios$ | async as negocios; else loadingTemplate">
+    <!-- Si hay datos de negocios, muestra la lista -->
+    <ul>
+      <li *ngFor="let negocio of negocios">
+        <!-- Muestra información relevante del negocio -->
+        <div>{{ negocio.id }}</div>
+        <div>{{ negocio.nombre }}</div>
+        <div>{{ negocio.direccion }}</div>
+        <!-- Puedes mostrar más propiedades del negocio según tus necesidades -->
+      </li>
+    </ul>
+  </ng-container>
+
+  <!-- Template para mostrar mientras se cargan los datos -->
+  <ng-template #loadingTemplate>
+    <p>Cargando negocios...</p>
+  </ng-template>
+</div>

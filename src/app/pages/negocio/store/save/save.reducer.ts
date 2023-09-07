@@ -38,8 +38,9 @@ export function reducer(state: ListState = initialState, action: fromActions.All
       }
 
       case fromActions.Types.READ_SUCCESS: {
-        return {...state, loading: false, negocios: action.negocios}
+        return { ...state, negocios: action.negocios, loading: false, error: null };
       }
+
 
       case fromActions.Types.READ_ERROR: {
         return  {...state, loading: false, error: action.error}

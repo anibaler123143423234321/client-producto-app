@@ -4,6 +4,8 @@ import * as fromRoot from '@app/store';
 import * as fromUser from '@app/store/user';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { NegocioService } from '@app/services/NegocioService';
+
 
 @Component({
   selector: 'app-registration',
@@ -12,14 +14,32 @@ import { Observable } from 'rxjs';
 })
 export class RegistrationComponent implements OnInit {
   loading$! : Observable<boolean | null>;
+  negocios: { id: number; nombre: string }[] = [];
+  selectedNegocioId: number | undefined;
 
   constructor(
-    private store: Store<fromRoot.State>
+    private store: Store<fromRoot.State>,
+    private negocioService: NegocioService
+
   ) { }
 
-  ngOnInit(): void {
-    this.loading$ = this.store.pipe(select(fromUser.getLoading));
-  }
+ngOnInit(): void {
+  this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
+    this.negocios = negocios.map((negocio) => ({
+      id: negocio.id,
+      nombre: negocio.nombre
+    }));
+    console.log('Negocios cargados:', this.negocios);
+
+    // Inicializar selectedNegocioId con el primer negocio de la lista
+    if (this.negocios.length > 0) {
+      this.selectedNegocioId = this.negocios[0].id;
+    }
+  });
+
+  this.loading$ = this.store.pipe(select(fromUser.getLoading));
+}
+
 
   registrarUsuario(form: NgForm) {
 
@@ -30,7 +50,8 @@ export class RegistrationComponent implements OnInit {
           telefono: form.value.telefono,
           username: form.value.username,
           email: form.value.email,
-          password: form.value.password
+          password: form.value.password,
+          negocioId: this.selectedNegocioId?.toString() // Convertir a cadena
         }
 
         this.store.dispatch(new fromUser.SignUpEmail(userCreateRequest));

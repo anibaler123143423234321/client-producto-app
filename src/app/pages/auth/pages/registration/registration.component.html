@@ -111,6 +111,16 @@
        <mat-error>El password debe tener mas de 7 caracteres</mat-error>
      </mat-form-field>
 
+     <mat-form-field>
+      <mat-label>Seleccione un negocio</mat-label>
+      <mat-select [(ngModel)]="selectedNegocioId" name="negocioId" required>
+        <mat-option *ngFor="let negocio of negocios" [value]="negocio.id">
+          {{ negocio.nombre }}
+        </mat-option>
+      </mat-select>
+      <mat-error>Debe seleccionar un negocio</mat-error>
+    </mat-form-field>
+
 
      <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Guardar</button>
    </form>

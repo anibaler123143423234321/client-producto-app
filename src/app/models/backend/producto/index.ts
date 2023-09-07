@@ -6,4 +6,5 @@ export interface Producto{
   precio: number;
   fechaCreacion: string;
   direccion: string;
+  negocioId?: string;
 }

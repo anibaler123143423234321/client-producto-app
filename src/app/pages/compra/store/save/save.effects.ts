@@ -77,7 +77,7 @@ this.actions.pipe(
     this.httpClient.put<CompraResponse>(`${environment.url}gateway/compra/${action.compraId}`, { estadoCompra: action.estadoCompra })
       .pipe(
         tap(() => {
-           this.router.navigate(['compra/listCompra']);
+           this.router.navigate(['user/list']);
           console.log('Estado de compra actualizado con éxito');
         }),
         map((updatedCompra: CompraResponse) => new fromActions.UpdateEstadoSuccess(updatedCompra)),

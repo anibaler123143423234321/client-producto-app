@@ -41,11 +41,11 @@ export class SaveEffectsNegocio {
       ofType(fromActions.Types.CREATE),
       map((action: fromActions.Create) => action.negocio),
       switchMap((request: NegocioCreateRequest) =>
-        this.httpClient.post<NegocioResponse>(`${environment.url}gateway/negocios`, request)
+        this.httpClient.post<NegocioResponse>(`${environment.url}gateway/negocios/`, request)
           .pipe(
             delay(1000),
             tap((response: NegocioResponse) => {
-              this.router.navigate(['producto/list']);
+              this.router.navigate(['negocio/list']);
             }),
             map((negocio: NegocioResponse) => new fromActions.CreateSuccess(negocio)),
             catchError(err => {

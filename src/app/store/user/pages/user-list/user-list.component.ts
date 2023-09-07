@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UserResponse } from '../../user.models';
 import * as fromActions from '@app/store/user/user.actions';
 import * as fromSelectors from '@app/store/user/user.selectors';
@@ -8,6 +8,7 @@ import { CompraResponse } from '@app/pages/compra/store/save';
 import * as fromList from '@app/pages/compra/store/save';
 import * as fromRoot from '@app/store';
 import * as fromActionsL from '@app/pages/compra/store/save/save.actions'; // Importa la acción Create
+import { CompraService } from '@app/services/CompraService';
 
 @Component({
   selector: 'app-user-list',
@@ -24,25 +25,32 @@ export class UserListComponent implements OnInit {
   userComprasMap: { [userId: number]: CompraResponse[] } = {}; // Mapa de compras por usuario
   estadoEditadoExitoso: boolean = false;
   mensajeExito = '';
-  constructor(private store: Store<fromRoot.State>) {
+  constructor(private store: Store<fromRoot.State>,
+    private CompraService: CompraService) {
     this.users$ = this.store.select(fromSelectors.getUsers);
     this.loading$ = this.store.select(fromSelectors.getLoading);
   }
 
   ngOnInit() {
     this.store.dispatch(new fromActions.ListUsers());
-    this.store.dispatch(new fromList.ReadAll()); // Utiliza la acción ReadAll para obtener todas las compras
-    this.compras$ = this.store.pipe(select(fromList.getCompras));
 
-    // Suscribirse a cambios en la lista de usuarios y compras
-    this.users$.subscribe((users) => {
-      if (users) {
-        // Filtrar y asociar las compras a los usuarios
-        this.userComprasMap = this.filterComprasByUser(users);
-        this.filteredUsers = this.filterUsers(users, this.searchTerm);
-      }
+    // Utiliza CompraService para cargar los datos de compras
+    this.CompraService.cargarDatosDeCompras().subscribe((compras) => {
+      console.log('Datos de compras cargados:', compras); // Agrega el console.log para verificar los datos
+
+      this.compras$ = of(compras); // Asigna los datos de compras a compras$
+
+      // Suscribirse a cambios en la lista de usuarios y aplicar filtros
+      this.users$.subscribe((users) => {
+        if (users) {
+          this.userComprasMap = this.filterComprasByUser(users);
+          this.filteredUsers = this.filterUsers(users, this.searchTerm);
+        }
+      });
     });
   }
+
+
   // Función de filtro de usuarios
   filterUsers(users: UserResponse[], term: string): UserResponse[] {
     term = term.toLowerCase();

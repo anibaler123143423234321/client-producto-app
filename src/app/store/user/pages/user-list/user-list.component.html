@@ -24,18 +24,20 @@
     <thead>
       <tr>
         <th>ID</th>
+        <th>Minimarket</th>
         <th>Username</th>
         <th>Nombre</th>
         <th>Apellido</th>
         <th>Teléfono</th>
         <th>Email</th>
         <th>Rol</th>
-        <th>Compras</th>
+        <th>Compras(PRODUCTOID-NOMBREPRODUCTO-ESTADO)</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let user of filteredUsers">
         <td>{{ user.id }}</td>
+        <td>{{ user.negocioId }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.nombre }}</td>
         <td>{{ user.apellido }}</td>

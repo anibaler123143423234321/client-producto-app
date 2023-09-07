@@ -10,6 +10,7 @@ import { GeneralService } from '@app/services/general.service';
 import { CompraCreateRequest } from '@app/pages/compra/store/save';
 import { Router } from '@angular/router';
 import { CarritoService } from '@app/services/CarritoService';
+import { NegocioService } from '@app/services/NegocioService';
 
 @Component({
   selector: 'app-producto-list',
@@ -40,20 +41,38 @@ export class ProductoListComponent implements OnInit {
   cartItemCount = 0; // Inicialmente, no hay elementos en el carrito
   usuario$!: UserResponse | null;
 
+  idNegocio: number | undefined;
+  idNegocioProducto: string | undefined;
+  nombreNegocioProducto: string | undefined; // Variable para almacenar el nombre del negocio
+  negocios: { id: number; nombre: string }[] = []; // Arreglo con el ID y el nombre de los negocios
+  idNegocioUser: string | undefined;
+
+
   constructor(
     private store: Store<fromRoot.State>,
     public GeneralService: GeneralService,
     private router: Router,
-    public CarritoService: CarritoService
+    public CarritoService: CarritoService,
+    public NegocioService: NegocioService
   ) {}
 
   ngOnInit(): void {
+
     this.store.dispatch(new fromList.Read());
     this.loading$ = this.store.pipe(select(fromList.getLoading));
+    this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
 
     this.productos$ = this.store.pipe(select(fromList.getProductos));
     this.productos$.subscribe((productos) => {
-      this.productosLength = productos?.length;
+      if (productos && productos.length > 0) {
+        // Supongamos que idNegocioProducto está en el primer producto de la lista
+        this.idNegocioProducto = productos[0].negocioId;
+
+        // También puedes buscar idNegocioProducto en todos los productos y asignar el primero que encuentres
+        // this.idNegocioProducto = productos.find(producto => producto.idNegocioProducto)?.idNegocioProducto;
+
+        console.log('idNegocioProducto:', this.idNegocioProducto);
+      }
     });
 
     // Obtén los datos del carrito desde el servicio al cargar la página
@@ -62,14 +81,18 @@ export class ProductoListComponent implements OnInit {
   // Calcula la cantidad total de productos únicos
   this.cartItemCount = this.calculateUniqueProductCount();
 
+
     this.userId = this.GeneralService.usuario$?.id;
     this.productoId = this.GeneralService.usuario$?.id;
     this.nombreUsuario = this.GeneralService.usuario$?.nombre;
     this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
 
+    console.log('ID Negocio User:', this.idNegocioUser);
     console.log('Usuario Product List:', this.GeneralService.usuario$);
     console.log('Nombre Usuario:', this.nombreUsuario);
     console.log('Apellido Usuario:', this.apellidoUsuario);
+
+
   }
 
   // Agrega una función para filtrar por categoría
@@ -84,7 +107,15 @@ export class ProductoListComponent implements OnInit {
           return null;
         }
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        return productos.slice(startIndex, startIndex + this.itemsPerPage);
+        return productos
+          .filter((producto) => {
+            // Filtra los productos que coinciden con el idNegocioUser
+            return (
+              this.idNegocioUser !== undefined &&
+              producto.negocioId === this.idNegocioUser
+            );
+          })
+          .slice(startIndex, startIndex + this.itemsPerPage);
       })
     );
   }

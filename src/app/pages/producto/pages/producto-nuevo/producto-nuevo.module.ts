@@ -17,6 +17,7 @@ import { PopupsModule } from '@app/shared/popups';
 
 // Importa el módulo MatRadioModule para resolver el error
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select'; // Asegúrate de importar MatSelectModule
 
 @NgModule({
   declarations: [
@@ -38,7 +39,9 @@ import { MatRadioModule } from '@angular/material/radio';
     EntityPhotoModule,
     PopupsModule,
        // Agrega el MatRadioModule al módulo
-       MatRadioModule
+       MatRadioModule,
+       MatSelectModule, // Agrega MatSelectModule a la lista de imports
+
   ]
 })
 export class ProductoNuevoModule { }

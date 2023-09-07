@@ -14,6 +14,7 @@ import {MatCardModule} from '@angular/material/card';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SpinnerModule } from '@app/shared/indicators';
 
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,7 @@ import { SpinnerModule } from '@app/shared/indicators';
     MatFormFieldModule,
     MatButtonModule,
     FormsModule,
-
+    MatSelectModule,
     MatIconModule,
     MatInputModule,
     MatCardModule,

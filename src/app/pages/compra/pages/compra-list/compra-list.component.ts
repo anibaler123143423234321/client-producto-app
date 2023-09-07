@@ -11,6 +11,10 @@ import { Router } from '@angular/router';
 import * as fromActions from '../../store/save'; // Importa la acción Create
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'environments/environment';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { CompraService } from '@app/services/CompraService';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 @Component({
   selector: 'app-compra-list',
@@ -21,6 +25,7 @@ export class CompraListComponent implements OnInit {
   compras$!: Observable<CompraResponse[] | null>;
   loading$!: Observable<boolean | null>;
   comprasLength: number | undefined;
+
   @Input() user: User | null = null;
   estadoEditadoExitoso: boolean = false;
   mensajeExito = '';
@@ -30,13 +35,17 @@ export class CompraListComponent implements OnInit {
 
   currentPage = 1;
   itemsPerPage = 15; // Cambiar a 15 compras por página
+  boletaUrl: SafeUrl | undefined;
 
   constructor(
     private store: Store<fromRoot.State>,
     public GeneralService: GeneralService,
     private dialog: MatDialog,
     private router: Router,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private sanitizer: DomSanitizer,
+    public CompraService: CompraService
+
   ) {}
 
   // En el ngOnInit() de CompraListComponent
@@ -106,6 +115,8 @@ export class CompraListComponent implements OnInit {
     }
   }
 
+
+
   isAdmin(): boolean {
     // Verificar si user no es nulo y tiene la propiedad role
     return this.GeneralService.usuario$?.role === 'ADMIN';
@@ -118,4 +129,47 @@ export class CompraListComponent implements OnInit {
   changePage(step: number): void {
     this.currentPage += step;
   }
+
+// Generar PDF
+generarPDF(compra: any): void {
+  const pdfMake: any = require('pdfmake/build/pdfmake');
+  const pdfFonts: any = require('pdfmake/build/vfs_fonts');
+
+  pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+  const docDefinition = {
+    content: [
+      { text: 'Boleta de Compra', style: 'header' },
+      { text: 'Información de la Compra:', style: 'subheader' },
+      { text: `ID del Usuario: ${this.idUser}`, style: 'info' },
+      { text: `Nombres del Usuario: ${this.nombreUsuario} ${this.apellidoUsuario}`, style: 'info' },
+      { text: `Producto ID: ${compra.productoId}`, style: 'info' },
+      { text: `Nombre Producto: ${compra.titulo}`, style: 'info' },
+      { text: `Precio: ${compra.precioCompra}`, style: 'info' },
+      { text: `Fecha de Compra: ${compra.fechaCompra}`, style: 'info' },
+      { text: `Cantidad: ${compra.cantidad}`, style: 'info' },
+      // ... Resto del contenido del PDF ...
+    ],
+    styles: {
+      header: {
+        fontSize: 18,
+        bold: true,
+        margin: [0, 10, 0, 10],
+      },
+      subheader: {
+        fontSize: 16,
+        bold: true,
+        margin: [0, 5, 0, 5],
+      },
+      info: {
+        fontSize: 12,
+        margin: [0, 5, 0, 5],
+      },
+    },
+  };
+
+  pdfMake.createPdf(docDefinition).download('boleta.pdf');
+}
+
+
 }
