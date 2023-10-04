@@ -100,7 +100,7 @@ export class CompraNuevoComponent implements OnInit {
 
 
     const compra: CompraCreateRequest = {
-      titulo: this.titulo,
+      titulo: this.nombreProducto,
       cantidad: this.cantidad,
       productoId: this.productoId,
       userId: this.userId,

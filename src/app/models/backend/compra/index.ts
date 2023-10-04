@@ -4,7 +4,7 @@ export interface Compra {
   productoId: number;
   titulo: string;
   precioCompra: number;
-  fechaCompra: Date;
+  fechaCompra: string;
   cantidad: number;
   estadoCompra: string;
 }

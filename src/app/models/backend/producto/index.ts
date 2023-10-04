@@ -5,6 +5,7 @@ export interface Producto{
   picture: string;
   precio: number;
   fechaCreacion: string;
-  direccion: string;
+  categoriaId?: string;
   negocioId?: string;
+  stock: number;
 }

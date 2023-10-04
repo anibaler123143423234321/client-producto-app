@@ -142,7 +142,7 @@ generarPDF(compra: any): void {
       { text: 'Boleta de Compra', style: 'header' },
       { text: 'Información de la Compra:', style: 'subheader' },
       { text: `ID del Usuario: ${this.idUser}`, style: 'info' },
-      { text: `Nombres del Usuario: ${this.nombreUsuario} ${this.apellidoUsuario}`, style: 'info' },
+      { text: `Nombres del Usuario: ${this.nombreUsuario} ${this.apellidoUsuario}`, style: 'zinfo' },
       { text: `Producto ID: ${compra.productoId}`, style: 'info' },
       { text: `Nombre Producto: ${compra.titulo}`, style: 'info' },
       { text: `Precio: ${compra.precioCompra}`, style: 'info' },
@@ -157,7 +157,7 @@ generarPDF(compra: any): void {
         margin: [0, 10, 0, 10],
       },
       subheader: {
-        fontSize: 16,
+        fontSize: 12,
         bold: true,
         margin: [0, 5, 0, 5],
       },

@@ -149,4 +149,22 @@ this.actions.pipe(
 )
 );
 
+changeUserRole = createEffect(() =>
+this.actions.pipe(
+  ofType(fromActions.changeUserRole),
+  switchMap((action) =>
+    this.httpClient.put(`/api/user/change/${action.newRole}`, {}).pipe(
+      map(() => {
+        // Maneja la respuesta exitosa aquí si es necesario
+        return fromActions.changeUserRoleSuccess(); // Puedes crear esta acción según tus necesidades
+      }),
+      catchError((error) => {
+        // Maneja los errores aquí si es necesario
+        return of(fromActions.changeUserRoleFailure({ error: error.message }));
+      })
+    )
+  )
+)
+);
+
 }

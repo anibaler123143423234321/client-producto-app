@@ -6,73 +6,82 @@
 
 <section fxLayoutAlign="center">
   <mat-card>
-      <form fxLayout="column"
-        fxLayoutAlign="center center"
-        #f = "ngForm"
-        (ngSubmit) = "registrarProducto(f)"
-        fxLayoutGap="10px"
-      >
-
-        <div class="personal__photo">
-              <div class="photo">
-                  <app-entity-photo class="photo__img" [photoURL]="photoLoaded"></app-entity-photo>
-                  <button mat-button appFilesUpload (changed)="onFilesChanged($event)">
-                      <mat-icon>upload</mat-icon>
-                      Subir Imagen
-                  </button>
-              </div>
+    <form fxLayout="column"
+      fxLayoutAlign="center center"
+      #f="ngForm"
+      (ngSubmit)="registrarProducto(f)"
+      fxLayoutGap="10px"
+    >
+      <div class="personal__photo">
+        <div class="photo">
+          <app-entity-photo class="photo__img" [photoURL]="photoLoaded"></app-entity-photo>
+          <button mat-button appFilesUpload (changed)="onFilesChanged($event)">
+            <mat-icon>upload</mat-icon>
+            Subir Imagen
+          </button>
         </div>
+      </div>
 
-        <mat-form-field>
-          <mat-label>Ingrese Nombre</mat-label>
-          <input
+      <mat-form-field>
+        <mat-label>Ingrese Nombre</mat-label>
+        <input
           type="text"
           ngModel
           name="nombre"
           required
           placeholder="Ingrese Nombre"
           matInput
-          />
-          <mat-error>Debe ingresar un nombre</mat-error>
-        </mat-form-field>
+        />
+        <mat-error>Debe ingresar un nombre</mat-error>
+      </mat-form-field>
 
-        <div class="direccion-list">
-          <label>Seleccione Categoría:</label>
-          <mat-radio-group [(ngModel)]="selectedDireccion" name="direccion" required>
-            <mat-radio-button *ngFor="let direccion of direccions" [value]="direccion">{{ direccion }}</mat-radio-button>
-          </mat-radio-group>
-        </div>
+<!-- ... Otro código HTML anterior ... -->
+
+<mat-form-field>
+  <mat-label>Seleccione Categoría</mat-label>
+  <mat-select [(ngModel)]="selectedCategoria" name="categoria" required>
+    <mat-option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria.nombre }}</mat-option>
+  </mat-select>
+  <mat-error>Debe seleccionar una categoría</mat-error>
+</mat-form-field>
+
+<!-- ... Otro código HTML posterior ... -->
 
 
-        <mat-form-field>
-          <mat-label>Ingrese Precio</mat-label>
-          <input
+      <mat-form-field>
+        <mat-label>Ingrese Precio</mat-label>
+        <input
           type="text"
           ngModel
           name="precio"
           required
           placeholder="Ingrese Precio"
           matInput
-          />
-          <mat-error>Debe ingresar el precio</mat-error>
-        </mat-form-field>
+        />
+        <mat-error>Debe ingresar el precio</mat-error>
+      </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>Seleccione un negocio</mat-label>
-          <mat-select [(ngModel)]="selectedNegocioId" name="negocioId" required>
-            <mat-option *ngFor="let negocio of negocios" [value]="negocio.id">
-              {{ negocio.nombre }}
-            </mat-option>
-          </mat-select>
-          <mat-error>Debe seleccionar un negocio</mat-error>
-        </mat-form-field>
+      <mat-form-field>
+        <mat-label>Ingrese Stock</mat-label>
+        <input
+          type="number"
+          ngModel
+          name="stock"
+          required
+          placeholder="Ingrese Stock"
+          matInput
+        />
+        <mat-error>Debe ingresar el stock</mat-error>
+      </mat-form-field>
 
 
-        <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Guardar Producto</button>
+      <mat-form-field>
+        <mat-label>Negocio perteneciente</mat-label>
+        <input matInput [ngModel]="nombreNegocioUsuario" name="negocioNombre" disabled>
+        <input type="hidden" [ngModel]="idNegocioUser" name="negocioId">
+      </mat-form-field>
 
-
-      </form>
-
+      <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Guardar Producto</button>
+    </form>
   </mat-card>
-
 </section>

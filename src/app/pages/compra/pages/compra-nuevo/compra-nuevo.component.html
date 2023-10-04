@@ -2,16 +2,16 @@
   Compra realizada
 </div>
 
-<!-- Agrega un elemento div para mostrar el nombre del producto -->
+<!-- Agrega un elemento div para mostrar el nombre del producto
 <div *ngIf="nombreProducto" class="nombre-producto">
   Nombre del Producto: {{ nombreProducto }}
-</div>
+</div>-->
 
 <form (ngSubmit)="realizarCompra()">
 
   <mat-form-field>
-    <mat-label>Título</mat-label>
-    <input matInput [(ngModel)]="titulo" name="titulo" required>
+    <mat-label>Nombre del Producto</mat-label>
+    <input matInput [value]="nombreProducto" name="nombreProducto" readonly>
   </mat-form-field>
 
   <mat-form-field>

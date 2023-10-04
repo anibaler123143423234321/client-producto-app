@@ -1,0 +1,39 @@
+<app-spinner *ngIf="loading$ | async"></app-spinner>
+
+<mat-toolbar color="secondary">
+  <span>Registrar Nueva Categoria</span>
+</mat-toolbar>
+
+<section fxLayoutAlign="center">
+  <mat-card>
+    <form fxLayout="column"
+      fxLayoutAlign="center center"
+      #f="ngForm"
+      (ngSubmit)="registrarCategoria(f)"
+      fxLayoutGap="10px"
+    >
+
+      <mat-form-field>
+        <mat-label>Ingrese Nombre</mat-label>
+        <input
+          type="text"
+          ngModel
+          name="nombre"
+          required
+          placeholder="Ingrese Nombre"
+          matInput
+        />
+        <mat-error>Debe ingresar un nombre</mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-label>Negocio perteneciente</mat-label>
+        <input matInput [ngModel]="nombreNegocioUsuario" name="negocioNombre" disabled>
+        <input type="hidden" [ngModel]="idNegocioUser" name="negocioId">
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Guardar Producto</button>
+    </form>
+  </mat-card>
+</section>

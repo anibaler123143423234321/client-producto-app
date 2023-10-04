@@ -4,13 +4,14 @@ import { AuthGuard } from '@app/guards/auth/auth.guard';
 
 const routes: Routes = [
   {
-    path: "list",
-    loadChildren: () => import("./pages/user-list/user-list.module").then(m=>m.UserListModule),
+    path: "nuevo",
+    loadChildren: () => import("./pages/categoria-nuevo/categoria-nuevo.module").then(m=>m.CategoriaNuevoModule),
     canActivate: [AuthGuard]
   },
+
   {
-    path: "rol",
-    loadChildren: () => import("./pages/user-rol/user-rol.module").then(m=>m.UserRolModule),
+    path: "list",
+    loadChildren: () => import("./pages/categoria-list/categoria-list.module").then(m=>m.CategoriaListModule),
     canActivate: [AuthGuard]
   },
   {
@@ -25,4 +26,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class UserRoutingModule { }
+export class CategoriaRoutingModule { }

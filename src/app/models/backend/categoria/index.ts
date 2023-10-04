@@ -1,6 +1,6 @@
-export interface Negocio{
+export interface Categoria {
   id: number;
   nombre: string;
-  direccion: string;
+  negocioId?: string;
   fechaCreacion?: string;
 }

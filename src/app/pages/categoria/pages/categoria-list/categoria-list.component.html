@@ -1,0 +1,20 @@
+<div class="negocio-list">
+  <h1>Listado de Categorías</h1>
+
+  <ng-container *ngIf="loading$ | async; else categoriasList">
+    <p>Cargando categorías...</p>
+  </ng-container>
+
+  <ng-template #categoriasList>
+    <ul>
+      <li *ngFor="let categoria of categorias$ | async">
+        <!-- Muestra información relevante de la categoría -->
+        <div>ID de Categoría: {{ categoria.id }}</div>
+        <div>ID de Negocio de la Categoría: {{ categoria.negocioId }}</div>
+        <div>Nombre de Categoría: {{ categoria.nombre }}</div>
+        <div>Fecha de Creación: {{ categoria.fechaCreacion | date:'dd/MM/yyyy' }}</div>
+        <!-- Puedes mostrar más propiedades de la categoría según tus necesidades -->
+      </li>
+    </ul>
+  </ng-template>
+</div>

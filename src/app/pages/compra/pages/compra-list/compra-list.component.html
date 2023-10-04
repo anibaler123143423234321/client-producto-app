@@ -14,15 +14,15 @@
         *ngFor="let compra of paginatedCompras$ | async"
       >
         <div *ngIf="compra">
-          <h3>ID del Usuario: {{ idUser }}</h3>
+          <!-- <h3>ID del Usuario: {{ idUser }}</h3>-->
           <h3>
             Nombres del Usuario: {{ nombreUsuario + " " + apellidoUsuario }}
           </h3>
           <p>Producto ID: {{ compra.productoId }}</p>
-          <p>Título: {{ compra.titulo }}</p>
-          <p>Precio: {{ compra.precioCompra }}</p>
+          <p>Nombre Producto: {{ compra.titulo }}</p>
+          <p>Precio Total de la Compra: {{ compra.precioCompra }}</p>
           <p>Fecha de Compra: {{ compra.fechaCompra | date : "yyyy-MM-dd" }}</p>
-          <p>Cantidad: {{ compra.cantidad }}</p>
+          <p>Cantidad comprada: {{ compra.cantidad }}</p>
           <p>Estado: {{ compra.estadoCompra }}</p>
           <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
           <button *ngIf="isAdmin()" (click)="editarEstado(compra)">

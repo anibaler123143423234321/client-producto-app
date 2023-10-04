@@ -28,20 +28,7 @@
     </div>
   </div>
 
-  <mat-form-field>
-    <mat-label>Categoría: Todos</mat-label>
-    <mat-select
-      [(value)]="selectedDireccion"
-      (selectionChange)="filterByCategory(selectedDireccion)"
-    >
-      <mat-option value="">Todas</mat-option>
-      <mat-option value="golosinas">Golosinas</mat-option>
-      <mat-option value="bebidas">Bebidas</mat-option>
-      <mat-option value="ropa">Ropa</mat-option>
-      <mat-option value="rrhh">RRHH</mat-option>
-      <mat-option value="helados">Helados</mat-option>
-    </mat-select>
-  </mat-form-field>
+
 
   <div class="cards-container">
     <ul class="cards">
@@ -49,30 +36,28 @@
         class="cards__item"
         *ngFor="let producto of paginatedProductos$ | async"
       >
-        <ng-container
-          *ngIf="!selectedDireccion || producto.direccion === selectedDireccion"
+       <!-- <ng-container
+          *ngIf="!selectedCategoria || producto.categoria === selectedCategoria"
         >
+        -->
           <mat-card class="example-card">
+
             <mat-card-header>
-              <mat-card-title>{{ producto.negocioId }}</mat-card-title>
-              <mat-card-title>{{ producto.nombre }}</mat-card-title>
-              <mat-card-subtitle
-                >Precio {{ producto.precio }}</mat-card-subtitle
-              >
+              <mat-card-title >Nombre del Producto: {{ producto.nombre }}</mat-card-title>
+              <mat-card-subtitle >NegocioId del Producto {{ producto.negocioId }}</mat-card-subtitle>
+              <mat-card-subtitle >CategoriaId del Producto {{ producto.categoriaId }}</mat-card-subtitle>
+              <mat-card-subtitle >Precio del Producto: {{ producto.precio }}</mat-card-subtitle>
+              <mat-card-subtitle >Stock del Producto: {{ producto.stock }}</mat-card-subtitle>
+
             </mat-card-header>
             <img
               mat-card-image
               src="{{ producto.picture ? producto.picture : pictureDefault }}"
               alt="{{ producto.nombre }}"
             />
-            <mat-card-content>
-              <p>Categoria: {{ producto.direccion }}</p>
-            </mat-card-content>
+
             <mat-card-actions>
               <button mat-button>Ver</button>
-              <!-- <button mat-button [routerLink]="['../../compra/nuevaCompra', producto.id]" routerLinkActive="active">Comprar</button> -->
-
-              <!-- <li><a>{{ user ? user.nombre + ' ' + user.apellido : null}}</a></li> -->
               <button
                 mat-button
                 (click)="
@@ -98,7 +83,7 @@
               </button>
             </mat-card-actions>
           </mat-card>
-        </ng-container>
+
       </li>
     </ul>
   </div>

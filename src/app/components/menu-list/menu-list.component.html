@@ -26,6 +26,15 @@
     <span class="navegacion-list-label">Agregar Negocio</span>
   </a>
 
+  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="categoria/nuevo">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Agregar Categoria</span>
+  </a>
+
+  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="producto/nuevo">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Agregar Producto</span>
+  </a>
 
    <a *ngIf="isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="negocio/list">
     <mat-icon>add</mat-icon>
@@ -33,9 +42,9 @@
   </a>
 
 
-  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="producto/nuevo">
+  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="categoria/list">
     <mat-icon>add</mat-icon>
-    <span class="navegacion-list-label">Agregar Producto</span>
+    <span class="navegacion-list-label">Listar Categorias</span>
   </a>
 
 
@@ -54,6 +63,10 @@
     <span class="navegacion-list-label">Ver Usuario-Compras</span>
   </a>
 
+  <a *ngIf="isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="user/rol">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Dar Rol</span>
+  </a>
 
   <a *ngIf="isAuthorized" mat-list-item (click)="onSignOut()" (click)="closeMenu()">
     <mat-icon>logout</mat-icon>

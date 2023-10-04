@@ -36,7 +36,7 @@ export class ProductoListComponent implements OnInit {
   pictureDefault: string =
     'https://firebasestorage.googleapis.com/v0/b/edificacion-app.appspot.com/o/image%2F1637099019171_O5986058_0.jpg?alt=media&token=0a146233-d63b-4702-b28d-6eaddf5e207a';
   // Agrega una variable para almacenar la categoría seleccionada
-  selectedDireccion: string | null = null;
+  selectedCategoria: string | null = null;
   productosLength: number | undefined;
   cartItemCount = 0; // Inicialmente, no hay elementos en el carrito
   usuario$!: UserResponse | null;
@@ -65,15 +65,17 @@ export class ProductoListComponent implements OnInit {
     this.productos$ = this.store.pipe(select(fromList.getProductos));
     this.productos$.subscribe((productos) => {
       if (productos && productos.length > 0) {
-        // Supongamos que idNegocioProducto está en el primer producto de la lista
-        this.idNegocioProducto = productos[0].negocioId;
+        // Aquí puedes implementar tu lógica para seleccionar el valor deseado de idNegocioProducto
+        // Por ejemplo, si deseas el valor del producto actualmente seleccionado por alguna razón específica:
+        // this.idNegocioProducto = productos[this.productoId - 1].negocioId;
 
-        // También puedes buscar idNegocioProducto en todos los productos y asignar el primero que encuentres
-        // this.idNegocioProducto = productos.find(producto => producto.idNegocioProducto)?.idNegocioProducto;
+        // Si deseas el valor del producto que pertenece al negocio actual del usuario:
+        this.idNegocioProducto = productos.find(producto => producto.negocioId === this.idNegocioUser)?.negocioId;
 
         console.log('idNegocioProducto:', this.idNegocioProducto);
       }
     });
+
 
     // Obtén los datos del carrito desde el servicio al cargar la página
     this.arrayCompra = this.CarritoService.getArrayCompra();
@@ -97,7 +99,7 @@ export class ProductoListComponent implements OnInit {
 
   // Agrega una función para filtrar por categoría
   filterByCategory(direccion: string | null): void {
-    this.selectedDireccion = direccion;
+    this.selectedCategoria = direccion;
   }
 
   get paginatedProductos$(): Observable<ProductoResponse[] | null> {

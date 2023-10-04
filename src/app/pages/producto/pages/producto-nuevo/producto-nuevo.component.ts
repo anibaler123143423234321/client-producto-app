@@ -5,6 +5,8 @@ import * as fromRoot from '@app/store';
 import * as fromList from '../../store/save';
 import { select, Store } from '@ngrx/store';
 import { NegocioService } from '@app/services/NegocioService';
+import { GeneralService } from '@app/services/general.service';
+import { CategoriaService } from '@app/services/CategoriaService';
 
 @Component({
   selector: 'app-producto-nuevo',
@@ -14,45 +16,69 @@ import { NegocioService } from '@app/services/NegocioService';
 export class ProductoNuevoComponent implements OnInit {
   loading$!: Observable<boolean | null>;
   photoLoaded!: string;
-  direccions: string[] = ['bebidas', 'golosinas', 'ropa', 'rrhh', 'helados'];
-  selectedDireccion: string = '';
-
+  categorias: { id: string; nombre: string }[] = [];
+  selectedCategoria: { id: string; nombre: string } | undefined;
   negocios: { id: number; nombre: string }[] = [];
   selectedNegocioId: number | undefined;
+  idUser: number | undefined;
+  idNegocio: number | undefined;
+  idNegocioUser: string | undefined;
+  nombreNegocioUsuario: string | undefined;
+  stock: number | undefined;
+  nombreAreaProducto: string | undefined;
 
-  constructor(private store: Store<fromRoot.State>,
-    private negocioService: NegocioService // Inyecta NegocioService
-    ) {}
+  constructor(
+    private store: Store<fromRoot.State>,
+    private negocioService: NegocioService,
+    private generalService: GeneralService,
+    private categoriaService: CategoriaService
+  ) {}
 
- ngOnInit(): void {
-    // Carga los datos de negocios y suscríbete
-    this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
-      this.negocios = negocios.map((negocio) => ({
-        id: negocio.id,
-        nombre: negocio.nombre
-      }));
-      console.log('Negocios cargados:', this.negocios);
+  ngOnInit(): void {
+    this.idUser = this.generalService.usuario$?.id;
+    this.idNegocioUser = this.generalService.usuario$?.negocioId;
+    console.log('ID Usuario:', this.idUser);
+    console.log('ID Negocio User:', this.idNegocioUser);
 
-      // Inicializar selectedNegocioId con el primer negocio de la lista
-      if (this.negocios.length > 0) {
-        this.selectedNegocioId = this.negocios[0].id;
-      }
-    });
+    if (this.idNegocioUser !== undefined) {
+      this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
+        this.negocios = negocios.map((negocio) => ({
+          id: negocio.id,
+          nombre: negocio.nombre
+        }));
+        console.log('Negocios cargados:', this.negocios);
 
-    this.loading$ = this.store.pipe(select(fromList.getLoading));
+        const negocioUsuario = negocios.find(
+          (negocio) => negocio.id === parseInt(this.idNegocioUser!)
+        );
+        if (negocioUsuario) {
+          this.nombreNegocioUsuario = negocioUsuario.nombre;
+        }
+      });
+
+      this.categoriaService.cargarCategorias().subscribe((categorias) => {
+        this.categorias = categorias.map((categoria) => ({
+          id: categoria.id.toString(),
+          nombre: categoria.nombre
+        }));
+        console.log('Categorías cargadas:', this.categorias);
+      });
+    }
   }
-
 
   registrarProducto(form: NgForm): void {
     if (form.valid) {
       this.loading$ = this.store.pipe(select(fromList.getLoading));
 
+      const stockValue = this.stock !== undefined ? Number(this.stock) : 0;
+
       const productoCreateRequest: fromList.ProductoCreateRequest = {
         nombre: form.value.nombre,
         picture: this.photoLoaded,
         precio: Number(form.value.precio),
-        direccion: this.selectedDireccion, // Usar la categoría seleccionada
-        negocioId: this.selectedNegocioId?.toString() // Asigna el ID del negocio seleccionado
+        categoriaId: this.selectedCategoria?.id, // Usar el ID de la categoría seleccionada
+        negocioId: this.idNegocioUser,
+        stock: stockValue,
       };
       this.store.dispatch(new fromList.Create(productoCreateRequest));
     }

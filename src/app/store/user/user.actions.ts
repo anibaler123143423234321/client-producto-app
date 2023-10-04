@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
 import {EmailPasswordCredentials, UserCreateRequest, UserResponse} from './user.models';
-
+import { createAction, props } from '@ngrx/store';
 
 export enum Types {
   INIT = '[User] Init: Start',
@@ -36,6 +36,10 @@ export enum Types {
   LIST_USERS = '[User] Listar Usuarios',
   LIST_USERS_SUCCESS = '[User] Listar Usuarios Éxito',
   LIST_USERS_ERROR = '[User] Listar Usuarios Error',
+
+  UPDATE_USERS = '[User] Actualizar Usuario',
+  UPDATE_USERS_SUCCESS = '[User] Actualizar Usuario Éxito',
+  UPDATE_USERS_ERROR = '[User] Actualizar Usuario Error',
 
 }
 
@@ -171,6 +175,22 @@ export class ListUsersError implements Action {
   readonly type = Types.LIST_USERS_ERROR;
   constructor(public error: string) {}
 }
+
+//actualizar
+
+export const changeUserRole = createAction(
+  '[User] Change User Role',
+  props<{ username: string; newRole: string }>()
+);
+
+export const changeUserRoleSuccess = createAction(
+  '[User] Change User Role Success'
+);
+
+export const changeUserRoleFailure = createAction(
+  '[User] Change User Role Failure',
+  props<{ error: string }>()
+);
 
 
 export type All =
