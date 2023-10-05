@@ -8,7 +8,7 @@ import { GeneralService } from '@app/services/general.service';
 import { MatDialog } from '@angular/material/dialog';
 import { User } from '@app/models/backend/user/index';
 import { Router } from '@angular/router';
-import * as fromActions from '../../store/save'; // Importa la acción Create
+import * as fromActions from '../../store/save';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -22,55 +22,39 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   styleUrls: ['./compra-list.component.scss'],
 })
 export class CompraListComponent implements OnInit {
-  compras$!: Observable<CompraResponse[] | null>;
+  compras$: Observable<CompraResponse[] | null>;
   loading$!: Observable<boolean | null>;
-  comprasLength: number | undefined;
+  comprasLength: number;
 
-  @Input() user: User | null = null;
+  compraGroups: { [key: string]: CompraResponse[] } = {};
+  paginatedCompras$: Observable<CompraResponse[] | null>;
+
+  @Input() user!: User | null;
   estadoEditadoExitoso: boolean = false;
   mensajeExito = '';
   idUser: number | undefined;
-  nombreUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
-  apellidoUsuario: string | undefined; // Agrega la variable nombreUsuario aquí
+  nombreUsuario: string;
+  apellidoUsuario: string;
 
   currentPage = 1;
-  itemsPerPage = 15; // Cambiar a 15 compras por página
-  boletaUrl: SafeUrl | undefined;
+  itemsPerPage = 15;
+  boletaUrl!: SafeUrl;
 
   constructor(
     private store: Store<fromRoot.State>,
-    public GeneralService: GeneralService,
+    public generalService: GeneralService,
     private dialog: MatDialog,
     private router: Router,
     private httpClient: HttpClient,
     private sanitizer: DomSanitizer,
-    public CompraService: CompraService
-
-  ) {}
-
-  // En el ngOnInit() de CompraListComponent
-  ngOnInit(): void {
-    this.store.dispatch(new fromList.Read());
-    this.loading$ = this.store.pipe(select(fromList.getLoading));
+    public compraService: CompraService
+  ) {
+    this.comprasLength = 0;
+    this.nombreUsuario = '';
+    this.apellidoUsuario = '';
     this.compras$ = this.store.pipe(select(fromList.getCompras));
-
-    // Puedes agregar logs para verificar la carga de datos
-    this.compras$.subscribe((compras) => {
-      this.comprasLength = compras?.length || 0; // Asegúrate de manejar el caso de "compras" siendo null
-    });
-
-    this.nombreUsuario = this.GeneralService.usuario$?.nombre;
-    this.idUser = this.GeneralService.usuario$?.id
-    this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
-    console.log('ID Usuario:', this.idUser);
-    console.log('Nombre Usuario:', this.nombreUsuario);
-    console.log('Apellido Usuario:', this.apellidoUsuario);
-  }
-
-  get paginatedCompras$(): Observable<CompraResponse[] | null> {
-    return this.compras$.pipe(
+    this.paginatedCompras$ = this.compras$.pipe(
       map((compras) => {
-        // console.log("Compras:",compras)
         if (!compras) {
           return null;
         }
@@ -78,6 +62,22 @@ export class CompraListComponent implements OnInit {
         return compras.slice(startIndex, startIndex + this.itemsPerPage);
       })
     );
+  }
+
+  ngOnInit(): void {
+    this.store.dispatch(new fromList.Read());
+    this.loading$ = this.store.pipe(select(fromList.getLoading));
+
+    this.compras$.subscribe((compras) => {
+      if (compras) {
+        this.comprasLength = compras.length;
+        this.compraGroups = this.groupComprasByFecha(compras);
+      }
+    });
+
+    this.nombreUsuario = this.generalService.usuario$?.nombre || '';
+    this.apellidoUsuario = this.generalService.usuario$?.apellido || '';
+    this.idUser = this.generalService.usuario$?.id;
   }
 
   editarEstado(compra: CompraResponse): void {
@@ -98,28 +98,22 @@ export class CompraListComponent implements OnInit {
     if (nuevoEstado && estadosPosibles.includes(nuevoEstado)) {
       const compraId = compra.id;
 
-      // Despacha la acción para actualizar el estado de la compra
       this.store.dispatch(new fromActions.UpdateEstado(compraId, nuevoEstado));
 
-      // Establece las variables para mostrar el mensaje de éxito
       this.estadoEditadoExitoso = true;
       this.mensajeExito = 'Estado Cambiado con Éxito';
 
-      // Configura un temporizador para ocultar el mensaje después de 5 segundos
       setTimeout(() => {
         this.estadoEditadoExitoso = false;
         this.mensajeExito = '';
-      }, 8000); // 5000 milisegundos = 5 segundos
+      }, 8000);
     } else {
       console.log('Operación de actualización cancelada o estado no válido.');
     }
   }
 
-
-
   isAdmin(): boolean {
-    // Verificar si user no es nulo y tiene la propiedad role
-    return this.GeneralService.usuario$?.role === 'ADMIN';
+    return this.generalService.usuario$?.role === 'ADMIN';
   }
 
   navigateToProductoNuevo(): void {
@@ -130,45 +124,104 @@ export class CompraListComponent implements OnInit {
     this.currentPage += step;
   }
 
-// Generar PDF
-generarPDF(compra: any): void {
-  const pdfMake: any = require('pdfmake/build/pdfmake');
-  const pdfFonts: any = require('pdfmake/build/vfs_fonts');
+  generarPDF(compraGroups: CompraResponse[][]): void {
+    const pdfMake: any = require('pdfmake/build/pdfmake');
+    const pdfFonts: any = require('pdfmake/build/vfs_fonts');
 
-  pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-  const docDefinition = {
-    content: [
-      { text: 'Boleta de Compra', style: 'header' },
-      { text: 'Información de la Compra:', style: 'subheader' },
-      { text: `ID del Usuario: ${this.idUser}`, style: 'info' },
-      { text: `Nombres del Usuario: ${this.nombreUsuario} ${this.apellidoUsuario}`, style: 'zinfo' },
-      { text: `Producto ID: ${compra.productoId}`, style: 'info' },
-      { text: `Nombre Producto: ${compra.titulo}`, style: 'info' },
-      { text: `Precio: ${compra.precioCompra}`, style: 'info' },
-      { text: `Fecha de Compra: ${compra.fechaCompra}`, style: 'info' },
-      { text: `Cantidad: ${compra.cantidad}`, style: 'info' },
-      // ... Resto del contenido del PDF ...
-    ],
-    styles: {
+    // Configurar el tamaño del papel a 80 mm x 80 mm (ancho x alto) para una ticketera de 80 mm
+    const page = {
+      width: 80, // 80 mm de ancho
+      height: 210, // 210 mm de alto (tamaño de una ticketera típica)
+    };
+
+    // Definir los estilos del documento
+    const styles = {
       header: {
-        fontSize: 18,
+        fontSize: 14, // Tamaño de fuente ajustado
         bold: true,
-        margin: [0, 10, 0, 10],
-      },
-      subheader: {
-        fontSize: 12,
-        bold: true,
-        margin: [0, 5, 0, 5],
+        margin: [0, 5, 0, 10], // Márgenes ajustados
       },
       info: {
-        fontSize: 12,
+        fontSize: 10,
         margin: [0, 5, 0, 5],
       },
-    },
-  };
+    };
 
-  pdfMake.createPdf(docDefinition).download('boleta.pdf');
+    // Recorrer cada grupo de compras y generar un PDF separado para cada uno
+    compraGroups.forEach((compras, index) => {
+      // Obtener información del usuario y la fecha de la primera compra en el grupo
+      const usuario = `${this.nombreUsuario} ${this.apellidoUsuario}`;
+      const primeraCompra = compras[0];
+      const fechaCompra = new Date(
+        primeraCompra.fechaCompra
+      ).toLocaleDateString();
+
+      // Obtener IDs de compra y IDs de producto
+      const idsCompra = compras.map((compra) => compra.id.toString()).join(', ');
+      const idsProducto = compras
+        .map((compra) => compra.productoId.toString())
+        .join(', ');
+      const nombresProductos = compras
+        .map((compra) => `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`)
+        .join(', ');
+
+      // Obtener el precio total de los productos en este grupo
+      const precioTotal = this.getTotalPrecio(compras);
+
+      // Crear el documento PDF con el tamaño de página personalizado y los estilos
+      const docDefinition = {
+        page: page,
+        content: [
+          { text: 'Boleta de Compra', style: 'header' },
+          { text: 'Información de las Compras:', style: 'info' },
+          { text: `Nombre del Usuario: ${usuario}`, style: 'info' },
+          { text: `Fecha de Compra: ${fechaCompra}`, style: 'info' },
+          { text: `Codigos de las Compra: ${idsCompra}`, style: 'info' },
+          { text: `Codigos de los Productos: ${idsProducto}`, style: 'info' },
+          { text: `Nombre del Producto: ${nombresProductos}`, style: 'info' },
+          { text: `Precio Total de los Productos a pagar: $${precioTotal}`, style: 'info' },
+          // Agregar un espacio en blanco para separar las compras
+          { text: '', margin: [0, 10, 0, 0] },
+        ],
+        styles: styles, // Estilos del PDF
+      };
+
+      // Usar pdfMake con la configuración personalizada
+      pdfMake.vfs = pdfFonts.pdfMake.vfs;
+      const nombreUsuario = this.nombreUsuario || 'Usuario Desconocido'; // Obtén el nombre del usuario o usa un valor predeterminado
+      const nombreArchivo = `boleta_${nombreUsuario}_${index}.pdf`; // Nombre del archivo con el nombre del usuario
+
+      pdfMake.createPdf(docDefinition).download(nombreArchivo);
+    });
+  }
+
+
+// Actualiza esta función para agrupar por fechas
+groupComprasByFecha(compras: CompraResponse[]): { [key: string]: CompraResponse[] } {
+  const groupedCompras: { [key: string]: CompraResponse[] } = {};
+
+  compras.forEach((compra) => {
+    const fechaCompraKey = new Date(compra.fechaCompra).toDateString(); // Usar la fecha sin la hora
+    if (!groupedCompras[fechaCompraKey]) {
+      groupedCompras[fechaCompraKey] = [];
+    }
+    groupedCompras[fechaCompraKey].push(compra);
+  });
+
+  return groupedCompras;
+}
+
+
+getTotalPrecio(compras: CompraResponse[]): string {
+  const total = compras.reduce((sum, compra) => sum + compra.precioCompra, 0);
+  return total.toFixed(2);
+}
+
+
+objectKeys(obj: any): string[] {
+  return Object.keys(obj);
 }
 
 

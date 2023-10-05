@@ -1,7 +1,3 @@
-<div *ngIf="estadoEditadoExitoso" class="success-message mostrar">
-  {{ mensajeExito }}
-</div>
-
 <section class="container">
   <button mat-button (click)="navigateToProductoNuevo()">
     Regresar al Listado de Productos
@@ -9,49 +5,39 @@
 
   <div class="grid-container">
     <ul class="cards">
-      <li
-        class="cards__item card-item"
-        *ngFor="let compra of paginatedCompras$ | async"
-      >
-        <div *ngIf="compra">
-          <!-- <h3>ID del Usuario: {{ idUser }}</h3>-->
-          <h3>
-            Nombres del Usuario: {{ nombreUsuario + " " + apellidoUsuario }}
-          </h3>
-          <p>Producto ID: {{ compra.productoId }}</p>
-          <p>Nombre Producto: {{ compra.titulo }}</p>
-          <p>Precio Total de la Compra: {{ compra.precioCompra }}</p>
-          <p>Fecha de Compra: {{ compra.fechaCompra | date : "yyyy-MM-dd" }}</p>
-          <p>Cantidad comprada: {{ compra.cantidad }}</p>
-          <p>Estado: {{ compra.estadoCompra }}</p>
-          <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
-          <button *ngIf="isAdmin()" (click)="editarEstado(compra)">
-            Editar Estado
-          </button>
-          <button (click)="generarPDF(compra)">Descargar Boleta</button>
-
-        </div>
-      </li>
+      <ng-container *ngFor="let fechaCompra of objectKeys(compraGroups)">
+        <li class="cards__item card-item">
+          <div *ngIf="compraGroups[fechaCompra] && compraGroups[fechaCompra].length > 0">
+            <h3>Nombre del Usuario: {{ nombreUsuario }} {{ apellidoUsuario }}</h3>
+            <p>Fecha de Compra: {{ fechaCompra | date : "d/M/yyyy" }}</p>
+            <p>Codigos de las Compras: <span *ngFor="let compra of compraGroups[fechaCompra]; let last = last">{{ compra.id }}{{ !last ? ', ' : '' }}</span></p>
+            <p>Codigos de los Productos: <span *ngFor="let compra of compraGroups[fechaCompra]; let last = last">{{ compra.productoId }}{{ !last ? ', ' : '' }}</span></p>
+            <p>Nombre del Producto:
+              <ng-container *ngFor="let compra of compraGroups[fechaCompra]; let last = last">
+                {{ compra.titulo }}
+                ({{ compra.cantidad }} cant)
+                $ {{ compra.precioCompra.toFixed(2) }}
+                {{ !last ? ', ' : '' }}
+              </ng-container>
+            </p>
+            <p>Precio Total de los Productos a pagar: $ {{ getTotalPrecio(compraGroups[fechaCompra]) }}</p>
+            <p>Estado: {{ compraGroups[fechaCompra][0].estadoCompra }}</p>
+            <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
+            <div *ngIf="isAdmin()">
+              <button mat-button (click)="editarEstado(compraGroups[fechaCompra][0])">Editar Estado</button>
+            </div>
+            <div>
+              <button mat-button (click)="generarPDF([compraGroups[fechaCompra]])">Descargar Boleta</button>
+            </div>
+          </div>
+        </li>
+      </ng-container>
     </ul>
   </div>
 
-
-
   <div class="pagination">
-    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1">
-      Anterior
-    </button>
+    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1">Anterior</button>
     <span>Página {{ currentPage }}</span>
-    <button
-      mat-button
-      (click)="changePage(1)"
-      [disabled]="
-        currentPage * itemsPerPage >=
-        (comprasLength !== undefined ? comprasLength : 0)
-      "
-      *ngIf="comprasLength !== undefined"
-    >
-      Siguiente
-    </button>
+    <button mat-button (click)="changePage(1)" [disabled]="currentPage * itemsPerPage >= comprasLength">Siguiente</button>
   </div>
 </section>

@@ -14,6 +14,9 @@ export enum Types {
   FETCH_PRODUCT_SUCCESS = '[Producto] Obtener Producto Éxito',
   FETCH_PRODUCT_ERROR = '[Producto] Obtener Producto Error',
 
+  UPDATE_PRODUCT = '[Producto] Actualizar Producto',
+  UPDATE_PRODUCT_SUCCESS = '[Producto] Actualizar Producto Exito',
+  UPDATE_PRODUCT_ERROR = '[Producto] Actualizar Producto Error',
 }
 
 export class Read implements Action {
@@ -61,6 +64,23 @@ export class FetchProductError implements Action {
   constructor(public error: string) {}
 }
 
+// En save.actions.ts
+export class Update implements Action {
+  readonly type = Types.UPDATE_PRODUCT;
+  constructor(public payload: { productoId: number; nuevoProducto: any }) {}
+}
+
+export class UpdateSuccess implements Action {
+  readonly type = Types.UPDATE_PRODUCT_SUCCESS;
+  constructor(public producto: ProductoResponse) {}
+}
+
+export class UpdateError implements Action {
+  readonly type = Types.UPDATE_PRODUCT_ERROR;
+  constructor(public error: string) {}
+}
+
+
 export type All =
   Read
 | ReadSuccess
@@ -70,5 +90,8 @@ export type All =
 | CreateError
 | FetchProduct
 | FetchProductSuccess
-| FetchProductError;
+| FetchProductError
+| Update
+| UpdateSuccess
+| UpdateError;
 

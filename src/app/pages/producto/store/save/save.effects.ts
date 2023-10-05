@@ -70,4 +70,21 @@ export class SaveEffectsProducto {
     )
   );
 
+
+  update: Observable<Action> = createEffect(() =>
+  this.actions.pipe(
+    ofType(fromActions.Types.UPDATE_PRODUCT),
+    switchMap((action: fromActions.Update) => {
+      const { productoId, nuevoProducto } = action.payload;
+      return this.httpClient.put<ProductoResponse>(
+        `${environment.url}gateway/producto/${productoId}`,
+        nuevoProducto
+      ).pipe(
+        map((producto: ProductoResponse) => new fromActions.UpdateSuccess(producto)),
+        catchError((error) => of(new fromActions.UpdateError(error.message)))
+      );
+    })
+  )
+);
+
 }

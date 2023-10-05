@@ -28,62 +28,52 @@
     </div>
   </div>
 
+  <div>
+    <label for="categoria">Selecciona una categoría:</label>
+    <select id="categoria" [(ngModel)]="selectedCategoria" (change)="filterByCategory()">
+      <option value="-1">Todas las categorías</option>
+      <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</option>
+    </select>
+  </div>
 
 
   <div class="cards-container">
     <ul class="cards">
-      <li
-        class="cards__item"
-        *ngFor="let producto of paginatedProductos$ | async"
-      >
-       <!-- <ng-container
-          *ngIf="!selectedCategoria || producto.categoria === selectedCategoria"
-        >
-        -->
-          <mat-card class="example-card">
-
-            <mat-card-header>
-              <mat-card-title >Nombre del Producto: {{ producto.nombre }}</mat-card-title>
-              <mat-card-subtitle >NegocioId del Producto {{ producto.negocioId }}</mat-card-subtitle>
-              <mat-card-subtitle >CategoriaId del Producto {{ producto.categoriaId }}</mat-card-subtitle>
-              <mat-card-subtitle >Precio del Producto: {{ producto.precio }}</mat-card-subtitle>
-              <mat-card-subtitle >Stock del Producto: {{ producto.stock }}</mat-card-subtitle>
-
-            </mat-card-header>
-            <img
-              mat-card-image
-              src="{{ producto.picture ? producto.picture : pictureDefault }}"
-              alt="{{ producto.nombre }}"
-            />
-
-            <mat-card-actions>
-              <button mat-button>Ver</button>
-              <button
-                mat-button
-                (click)="
-                  addCarrito(producto.id, producto.precio, producto.nombre)
-                "
-              >
-                Añadir al Carrito
-              </button>
-              <button
-                mat-button
-                [routerLink]="[
-                  '../../compra/nuevaCompra',
-                  producto.id,
-                  producto.nombre,
-                  producto.precio,
-                  userId,
-                  nombreUsuario,
-                  apellidoUsuario
-                ]"
-                routerLinkActive="active"
-              >
-                Comprar
-              </button>
-            </mat-card-actions>
-          </mat-card>
-
+      <li class="cards__item" *ngFor="let producto of filteredProductos$ | async">
+        <mat-card class="example-card">
+          <mat-card-header>
+            <mat-card-title >Nombre del Producto: {{ producto.nombre }}</mat-card-title>
+            <mat-card-subtitle >NegocioId del Producto {{ producto.negocioId }}</mat-card-subtitle>
+            <mat-card-subtitle >CategoriaId del Producto {{ producto.categoriaId }}</mat-card-subtitle>
+            <mat-card-subtitle >Precio del Producto: {{ producto.precio }}</mat-card-subtitle>
+            <mat-card-subtitle >Stock del Producto: {{ producto.stock }}</mat-card-subtitle>
+          </mat-card-header>
+          <img
+            mat-card-image
+            src="{{ producto.picture ? producto.picture : pictureDefault }}"
+            alt="{{ producto.nombre }}"
+          />
+          <mat-card-actions>
+            <button mat-button>Ver</button>
+            <button mat-button (click)="addCarrito(producto.id, producto.precio, producto.nombre)">
+              Añadir al Carrito
+            </button>
+            <button mat-button
+              [routerLink]="[
+                '../../compra/nuevaCompra',
+                producto.id,
+                producto.nombre,
+                producto.precio,
+                userId,
+                nombreUsuario,
+                apellidoUsuario
+              ]"
+              routerLinkActive="active"
+            >
+              Comprar
+            </button>
+          </mat-card-actions>
+        </mat-card>
       </li>
     </ul>
   </div>
@@ -93,15 +83,9 @@
       Anterior
     </button>
     <span>Página {{ currentPage }}</span>
-    <button
-      mat-button
-      (click)="changePage(1)"
-      [disabled]="
-        currentPage * itemsPerPage >=
-        (productosLength !== undefined ? productosLength : 0)
-      "
-      *ngIf="productosLength !== undefined"
-    >
+    <button mat-button (click)="changePage(1)" [disabled]="currentPage * itemsPerPage >=
+      (productosLength !== undefined ? productosLength : 0)"
+      *ngIf="productosLength !== undefined">
       Siguiente
     </button>
   </div>
