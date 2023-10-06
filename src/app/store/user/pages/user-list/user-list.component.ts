@@ -9,6 +9,7 @@ import * as fromList from '@app/pages/compra/store/save';
 import * as fromRoot from '@app/store';
 import * as fromActionsL from '@app/pages/compra/store/save/save.actions'; // Importa la acción Create
 import { CompraService } from '@app/services/CompraService';
+import { GeneralService } from '@app/services/general.service';
 
 @Component({
   selector: 'app-user-list',
@@ -25,29 +26,38 @@ export class UserListComponent implements OnInit {
   userComprasMap: { [userId: number]: CompraResponse[] } = {}; // Mapa de compras por usuario
   estadoEditadoExitoso: boolean = false;
   mensajeExito = '';
+
+  idNegocioUser: string | undefined;
+
   constructor(private store: Store<fromRoot.State>,
-    private CompraService: CompraService) {
+    public CompraService: CompraService,
+    public GeneralService: GeneralService) {
     this.users$ = this.store.select(fromSelectors.getUsers);
     this.loading$ = this.store.select(fromSelectors.getLoading);
   }
 
   ngOnInit() {
     this.store.dispatch(new fromActions.ListUsers());
+    this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
 
     // Utiliza CompraService para cargar los datos de compras
     this.CompraService.cargarDatosDeCompras().subscribe((compras) => {
       console.log('Datos de compras cargados:', compras); // Agrega el console.log para verificar los datos
+      console.log('idNegocioUser:', this.idNegocioUser);
 
       this.compras$ = of(compras); // Asigna los datos de compras a compras$
 
-      // Suscribirse a cambios en la lista de usuarios y aplicar filtros
-      this.users$.subscribe((users) => {
-        if (users) {
-          this.userComprasMap = this.filterComprasByUser(users);
-          this.filteredUsers = this.filterUsers(users, this.searchTerm);
-        }
-      });
+    // Dentro del ngOnInit
+    this.users$.subscribe((users) => {
+      if (users) {
+        // Filtra los usuarios que tienen el mismo idNegocioUser
+        this.filteredUsers = users.filter((user) => user.negocioId === this.idNegocioUser);
+        this.userComprasMap = this.filterComprasByUser(this.filteredUsers);
+      }
     });
+    });
+
+
   }
 
 
@@ -122,6 +132,10 @@ export class UserListComponent implements OnInit {
   }
 
   editarEstado(user: UserResponse, compra: CompraResponse): void {
+    console.log('Editar estado llamado'); // Agrega este log para verificar
+    console.log('Editar Estado - Usuario:', user);
+    console.log('Editar Estado - Compra:', compra);
+
     const estadosPosibles: string[] = [
       'Pendiente Por Revisar',
       'Despachado',
@@ -137,6 +151,9 @@ export class UserListComponent implements OnInit {
 
       // Aquí debes implementar la lógica para actualizar el estado de la compra
       // Puedes usar una función o un servicio para hacer esto
+
+      console.log('Nuevo Estado:', nuevoEstado);
+      console.log('Compra ID:', compraId);
 
       // Despacha la acción para actualizar el estado de la compra
       this.store.dispatch(new fromActionsL.UpdateEstado(compraId, nuevoEstado));
@@ -154,5 +171,6 @@ export class UserListComponent implements OnInit {
       console.log('Operación de actualización cancelada o estado no válido.');
     }
   }
+
 
 }

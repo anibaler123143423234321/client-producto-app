@@ -4,7 +4,7 @@ export interface Producto{
   nombre: string;
   picture: string;
   precio: number;
-  fechaCreacion: string;
+  fechaCreacion?: string;
   categoriaId?: string;
   negocioId?: string;
   stock: number;

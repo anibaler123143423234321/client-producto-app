@@ -40,6 +40,34 @@
         <mat-error>Debe ingresar la dirección del negocio</mat-error>
       </mat-form-field>
 
+      <mat-form-field>
+        <mat-label>RUC</mat-label>
+        <input
+          type="text"
+          ngModel
+          name="ruc"
+          required
+          placeholder="Ingrese el RUC del Negocio"
+          matInput
+        />
+        <mat-error>Debe ingresar el RUC</mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-label>Tipo de RUC</mat-label>
+        <input
+          type="text"
+          ngModel
+          name="tipoRuc"
+          required
+          placeholder="Ingrese el tipo del RUC del Negocio"
+          matInput
+        />
+        <mat-error>Debe ingresar el Tipo de RUC</mat-error>
+      </mat-form-field>
+
+
       <button
         type="submit"
         mat-raised-button

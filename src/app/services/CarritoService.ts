@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { CompraCreateRequest } from '@app/pages/compra/store/save';
+import { ProductoResponse } from '@app/pages/producto/store/save';
+import { Action } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarritoService {
   private arrayCompra: CompraCreateRequest[] = [];
+  httpClient: any;
 
   constructor() {
 
@@ -41,5 +45,6 @@ export class CarritoService {
     this.arrayCompra = [];
     localStorage.removeItem('arrayCompra');
   }
+
 
 }

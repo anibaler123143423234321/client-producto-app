@@ -2,11 +2,6 @@
   Compra realizada
 </div>
 
-<!-- Agrega un elemento div para mostrar el nombre del producto
-<div *ngIf="nombreProducto" class="nombre-producto">
-  Nombre del Producto: {{ nombreProducto }}
-</div>-->
-
 <form (ngSubmit)="realizarCompra()">
 
   <mat-form-field>
@@ -16,7 +11,8 @@
 
   <mat-form-field>
     <mat-label>Cantidad</mat-label>
-    <input matInput type="number" [(ngModel)]="cantidad" name="cantidad" required>
+    <input matInput type="number" [(ngModel)]="cantidad" name="cantidad" required min="0">
+    <!-- Agrega min="0" para evitar valores negativos -->
   </mat-form-field>
 
   <mat-form-field>
@@ -24,5 +20,6 @@
     <input matInput [(ngModel)]="precio" name="precio" disabled>
   </mat-form-field>
 
-  <button mat-button type="submit">Realizar Compra</button>
+  <button mat-button type="submit" [disabled]="cantidad <= 0">Realizar Compra</button>
+  <!-- Agrega [disabled]="cantidad <= 0" para deshabilitar el botón cuando cantidad sea menor o igual a cero -->
 </form>

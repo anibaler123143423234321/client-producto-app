@@ -1,84 +1,116 @@
-import { Component, OnInit } from '@angular/core';
-import { CompraCreateRequest } from '../../store/save';
-import { ActivatedRoute } from '@angular/router'; // Importa ActivatedRoute para obtener datos de la ruta
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CarritoService } from '@app/services/CarritoService';
-import { Router } from '@angular/router';
-import * as fromActions from '../../store/save'; // Importa la acción Create
-import { Store } from '@ngrx/store'; // Asegúrate de importar Store desde '@ngrx/store'
+import * as fromActions from '../../store/save';
+import { Store, select } from '@ngrx/store';
+import { ProductoResponse } from '@app/pages/producto/store/save';
+import { ProductoService } from '@app/services/ProductoService';
+import { CompraCreateRequest } from '../../store/save';
+import { Observable, Subscription } from 'rxjs';
+import * as fromList from '@app/pages/producto/store/save';
 
 @Component({
   selector: 'app-compra-final',
   templateUrl: './compra-final.component.html',
   styleUrls: ['./compra-final.component.scss'],
 })
-export class CompraFinalComponent implements OnInit {
+export class CompraFinalComponent implements OnInit, OnDestroy {
   arrayCompra: CompraCreateRequest[] = [];
-  mostrarTabla = true; // Agrega esta variable de bandera
-  compraRealizada = false; // Variable de bandera para mostrar el mensaje
+  mostrarTabla = true;
+  compraRealizada = false;
+
+  productos$!: Observable<ProductoResponse[] | null>;
+  productosSubscription: Subscription | null = null;
+  actualizacionesCompletadas = 0; // Contador para rastrear actualizaciones completadas
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public CarritoService: CarritoService,
-    private store: Store // Inyecta el Store
-
+    private store: Store,
+    private productoService: ProductoService
   ) {}
 
   ngOnInit() {
-    // Utiliza el servicio de carrito para obtener el arrayCompra
     this.arrayCompra = this.CarritoService.getArrayCompra();
-    console.log('Datos de arrayCompra:', this.arrayCompra);
+    // console.log('Contenido de arrayCompra:', this.arrayCompra);
 
     this.route.queryParams.subscribe((params) => {
       if (params['arrayCompra']) {
-        // Haz algo como esto
         const productosSeleccionados = JSON.parse(params['arrayCompra']);
         this.arrayCompra = productosSeleccionados;
-        // Actualiza el servicio de carrito con los datos recién cargados.
         this.CarritoService.setArrayCompra(this.arrayCompra);
       }
     });
+
+    this.productos$ = this.store.pipe(select(fromList.getProductos));
   }
 
-  // En compra-final.component.ts
+  ngOnDestroy() {
+    // Asegúrate de desuscribirte para evitar fugas de memoria
+    if (this.productosSubscription) {
+      this.productosSubscription.unsubscribe();
+    }
+  }
+
   eliminarProducto(compra: CompraCreateRequest) {
-    // Encuentra el índice del producto en el arrayCompra
     const index = this.arrayCompra.indexOf(compra);
     if (index !== -1) {
-      // Elimina el producto del arrayCompra
       this.arrayCompra.splice(index, 1);
-      // Actualiza localStorage después de eliminar
       localStorage.setItem('arrayCompra', JSON.stringify(this.arrayCompra));
     }
   }
 
   regresarAListado() {
-    // Redirige a la página de listado de productos
-    this.router.navigate(['../producto/list']); // Ajusta la ruta según tu configuración de enrutamiento
+    this.router.navigate(['../producto/list']);
   }
 
   limpiarPantalla() {
-    // Limpia la pantalla estableciendo arrayCompra como un array vacío
     this.arrayCompra = [];
-    // Establece la bandera mostrarTabla en false para ocultar la tabla
     this.mostrarTabla = false;
   }
 
   realizarCompras() {
-    // Itera sobre el arrayCompra y envía cada compra individualmente al backend
+    if (!this.productosSubscription) {
+      // Suscríbete solo si no estás suscrito aún
+      this.productosSubscription = this.productos$.subscribe((productos) => {
+        if (productos && productos.length > 0) {
+          const productosActualizados = new Set<number>(); // Usar un conjunto para evitar duplicados
+
+          this.arrayCompra.forEach((compra) => {
+            const producto = productos.find((p) => p.id === compra.productoId);
+
+            if (producto && !productosActualizados.has(producto.id)) {
+              // Solo intenta actualizar productos que existen y no se han actualizado aún
+              productosActualizados.add(producto.id);
+
+              this.productoService.actualizarProducto(producto.id, producto).subscribe(
+                (productoActualizado) => {
+                  // console.log('Producto actualizado:', productoActualizado);
+                },
+                (error) => {
+                  console.error('Error al actualizar el producto:', error);
+                }
+              );
+            }
+          });
+        }
+      });
+    } else {
+      console.warn('Ya estás suscrito a productos$, evitando suscripción duplicada.');
+    }
+
+    // Continúa con el resto del código para realizar la compra
     this.arrayCompra.forEach((compra) => {
       this.store.dispatch(new fromActions.Create(compra));
     });
 
- // Limpia el arrayCompra después de realizar las compras
     this.arrayCompra = [];
 
-     // Establece la variable compraRealizada en verdadera después de realizar la compra
-     this.compraRealizada = true;
+    this.compraRealizada = true;
 
-     // Agrega la clase 'mostrar' para que se muestre el mensaje
-     setTimeout(() => {
-       this.compraRealizada = false; // Después de un tiempo, oculta el mensaje
-     }, 3000); // Esto ocultará el mensaje después de 3 segundos, ajusta el valor según tus necesidades
-   }
- }
+    setTimeout(() => {
+      this.compraRealizada = false;
+    }, 3000);
+  }
+}

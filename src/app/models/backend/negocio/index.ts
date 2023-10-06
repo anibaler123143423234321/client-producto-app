@@ -3,4 +3,6 @@ export interface Negocio{
   nombre: string;
   direccion: string;
   fechaCreacion?: string;
+  ruc: string;
+  tipoRuc: string;
 }

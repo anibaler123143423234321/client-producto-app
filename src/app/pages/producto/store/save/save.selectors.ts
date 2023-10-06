@@ -1,6 +1,7 @@
 
 import {createSelector} from '@ngrx/store';
 import {getProductoState, ProductoState} from '../index';
+import { createAction, props } from '@ngrx/store';
 
 import { ListState } from './save.reducer';
 
@@ -19,6 +20,7 @@ export const getProductos = createSelector(
   (state: ListState) => state.productos
 )
 
-
-
-
+export const updateStock = createAction(
+  '[Producto] Actualizar Stock',
+  props<{ productoId: number; nuevoStock: number }>()
+);

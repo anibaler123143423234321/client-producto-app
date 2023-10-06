@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { CarritoService } from '@app/services/CarritoService';
 import { NegocioService } from '@app/services/NegocioService';
 import { CategoriaService } from '@app/services/CategoriaService';
+import { ProductoService } from '@app/services/ProductoService';
 
 @Component({
   selector: 'app-producto-list',
@@ -44,6 +45,7 @@ export class ProductoListComponent implements OnInit {
   idNegocioUser: string | undefined;
   filteredProductos$: Observable<ProductoResponse[] | null> = this.productos$;
   categorias: { id: number; nombre: string }[] = [];
+  stockActualizado = false; // Variable para controlar el mensaje de confirmación
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -51,32 +53,39 @@ export class ProductoListComponent implements OnInit {
     private router: Router,
     public CarritoService: CarritoService,
     public NegocioService: NegocioService,
-    public CategoriaService: CategoriaService
-  ) {  this.selectedCategoria = "-1";
-   // Establecer por defecto "Todas las categorías"
-}
+    public CategoriaService: CategoriaService,
+    public productoService: ProductoService
+  ) {
+    this.selectedCategoria = "-1";
+    // Establecer por defecto "Todas las categorías"
+  }
 
-ngOnInit(): void {
-  this.store.dispatch(new fromList.Read());
-  this.loading$ = this.store.pipe(select(fromList.getLoading));
-  this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
+  ngOnInit(): void {
+    this.store.dispatch(new fromList.Read());
+    this.loading$ = this.store.pipe(select(fromList.getLoading));
+    this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
 
-  this.productos$ = this.store.pipe(select(fromList.getProductos));
-  this.productos$.subscribe((productos) => {
-    if (productos && productos.length > 0) {
-      this.idNegocioProducto = productos.find(
-        (producto) => producto.negocioId === this.idNegocioUser
-      )?.negocioId;
+    // Suscríbete a productos$ una vez y úsalo en varias partes del componente
+    this.productos$ = this.store.pipe(select(fromList.getProductos));
+    this.productos$.subscribe((productos) => {
+      if (productos && productos.length > 0) {
+        // Supongamos que idNegocioProducto está en el primer producto de la lista
+        this.idNegocioProducto = productos[0].negocioId;
 
-      console.log('idNegocioProducto:', this.idNegocioProducto);
-    }
-  });
+        console.log('idNegocioUser:', this.idNegocioUser);
+        console.log('idNegocioProducto:', this.idNegocioProducto);
 
-  this.CategoriaService.cargarCategorias().subscribe((categorias) => {
-    this.categorias = categorias;
-    this.selectedCategoria = "-1"; // Establecer por defecto "Todas las categorías"
-    this.filterByCategory(); // Llamar al método para mostrar todos los productos
-  });
+        // Agregar un console.log para verificar los productos
+        console.log('Productos:', productos);
+
+        // Filtra las categorías para mostrar solo las que pertenecen al negocio del usuario
+        this.CategoriaService.cargarCategorias().subscribe((categorias) => {
+          this.categorias = categorias.filter(categoria => categoria.negocioId === this.idNegocioUser);
+          this.selectedCategoria = "-1"; // Establecer por defecto "Todas las categorías"
+          this.filterByCategory(); // Llamar al método para mostrar todos los productos
+        });
+      }
+    });
 
     this.arrayCompra = this.CarritoService.getArrayCompra();
     this.cartItemCount = this.calculateUniqueProductCount();
@@ -85,6 +94,11 @@ ngOnInit(): void {
     this.productoId = this.GeneralService.usuario$?.id;
     this.nombreUsuario = this.GeneralService.usuario$?.nombre;
     this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
+
+    console.log('ID Negocio User:', this.idNegocioUser);
+    console.log('Usuario Product List:', this.GeneralService.usuario$);
+    console.log('Nombre Usuario:', this.nombreUsuario);
+    console.log('Apellido Usuario:', this.apellidoUsuario);
   }
 
   filterByCategory(): void {
@@ -96,16 +110,17 @@ ngOnInit(): void {
 
         // Comprueba si selectedCategoria es null o undefined
         if (this.selectedCategoria === null || this.selectedCategoria === undefined) {
-          // En este caso, muestra todos los productos
-          return productos;
+          // En este caso, muestra todos los productos del mismo negocioId
+          return productos.filter((producto) => producto.negocioId === this.idNegocioUser);
         }
 
         // Comprueba si selectedCategoria es "-1" (Todas las categorías)
-      if (this.selectedCategoria === "-1") {
-        return productos; // Mostrar todos los productos
-      }
+        if (this.selectedCategoria === "-1") {
+          // Mostrar todos los productos del mismo negocioId
+          return productos.filter((producto) => producto.negocioId === this.idNegocioUser);
+        }
 
-      const categoriaIdSeleccionada = this.selectedCategoria.toString();
+        const categoriaIdSeleccionada = this.selectedCategoria.toString();
 
         // Agrega un console.log para verificar los productos y la categoría seleccionada
         console.log('Productos:', productos);
@@ -115,14 +130,13 @@ ngOnInit(): void {
           if (producto.categoriaId !== undefined) {
             const categoriaIdProducto = producto.categoriaId.toString();
             console.log('Comparación:', categoriaIdProducto, categoriaIdSeleccionada);
-            return categoriaIdProducto === categoriaIdSeleccionada;
+            return categoriaIdProducto === categoriaIdSeleccionada && producto.negocioId === this.idNegocioUser;
           }
           return false;
         });
       })
     );
   }
-
 
   get paginatedProductos$(): Observable<ProductoResponse[] | null> {
     return this.productos$.pipe(
@@ -150,42 +164,79 @@ ngOnInit(): void {
   addCarrito(IDProducto: number, precioProducto: any, nombreProducto: any) {
     const estadoCompra = 'Pendiente Por Revisar';
 
-    let compra: CompraCreateRequest = {
-      titulo: nombreProducto,
-      cantidad: 1,
-      productoId: IDProducto,
-      userId: this.userId,
-      precioCompra: precioProducto,
-      estadoCompra: estadoCompra,
-    };
+    this.productos$
+      .pipe(
+        map((productos) =>
+          productos?.find((producto) => producto.id === IDProducto)
+        )
+      )
+      .subscribe((productoSeleccionado) => {
+        if (productoSeleccionado && productoSeleccionado.stock > 0) {
+          // Resta el stock del producto en el estado
+          productoSeleccionado.stock -= 1;
 
-    const existingCompra = this.arrayCompra.find(
-      (c) => c.productoId === IDProducto
-    );
+          // Establece el mensaje de confirmación solo cuando se hace clic en "Ir a Comprar"
+          if (!this.mostrarTabla) {
+            this.stockActualizado = true;
+          }
 
-    if (existingCompra) {
-      existingCompra.cantidad += 1;
-    } else {
-      const compra: CompraCreateRequest = {
-        titulo: nombreProducto,
-        cantidad: 1,
-        productoId: IDProducto,
-        userId: this.userId,
-        precioCompra: precioProducto,
-        estadoCompra: estadoCompra,
-      };
+          const productoEnCarrito = this.arrayCompra.find(
+            (c) => c.productoId === IDProducto
+          );
 
-      this.arrayCompra.push(compra);
-      this.uniqueProductIds.add(IDProducto);
-      this.CarritoService.setArrayCompra(this.arrayCompra);
-      this.cartItemCount = this.uniqueProductIds.size;
-    }
+          if (productoEnCarrito) {
+            // Si el producto ya está en el carrito, crea un nuevo objeto con cantidad + 1
+            const compra: CompraCreateRequest = {
+              titulo: nombreProducto,
+              cantidad: productoEnCarrito.cantidad + 1, // Aumenta la cantidad en 1
+              productoId: IDProducto,
+              userId: this.userId,
+              precioCompra: precioProducto,
+              estadoCompra: estadoCompra,
+            };
 
-    this.CarritoService.setArrayCompra(this.arrayCompra);
-    this.cartItemCount = this.uniqueProductIds.size;
+            // Actualiza la compra en el array
+            this.arrayCompra = this.arrayCompra.map((c) =>
+              c.productoId === IDProducto ? compra : c
+            );
+          } else {
+            // Si el producto no está en el carrito, crea una nueva compra
+            const compra: CompraCreateRequest = {
+              titulo: nombreProducto,
+              cantidad: 1,
+              productoId: IDProducto,
+              userId: this.userId,
+              precioCompra: precioProducto,
+              estadoCompra: estadoCompra,
+            };
 
-    this.mostrarTabla = true;
-    console.log('Contenido de arrayCompra:', this.arrayCompra);
+            this.arrayCompra.push(compra);
+          }
+
+          this.uniqueProductIds.add(IDProducto);
+          this.CarritoService.setArrayCompra(this.arrayCompra);
+          this.cartItemCount = this.uniqueProductIds.size;
+
+          this.mostrarTabla = true;
+          console.log('Contenido de arrayCompra:', this.arrayCompra);
+        } else {
+          // Manejar el caso en que no hay stock disponible
+          console.log('No hay stock disponible para este producto.');
+          // Establece un mensaje de error si lo deseas
+          this.productoAgregadoMensaje = `Producto "${nombreProducto}" no está disponible.`;
+        }
+      });
+  }
+
+  navegarACompraFinal() {
+    const arrayCompraData = JSON.stringify(this.arrayCompra);
+
+    // Restablece la variable stockActualizado a false antes de navegar
+    this.stockActualizado = false;
+
+    this.router.navigate(['../../compra/final'], {
+      queryParams: { arrayCompra: arrayCompraData },
+    });
   }
 
   calculateUniqueProductCount(): number {
@@ -196,13 +247,5 @@ ngOnInit(): void {
     });
 
     return uniqueProductIds.size;
-  }
-
-  navegarACompraFinal() {
-    const arrayCompraData = JSON.stringify(this.arrayCompra);
-
-    this.router.navigate(['../../compra/final'], {
-      queryParams: { arrayCompra: arrayCompraData },
-    });
   }
 }

@@ -23,6 +23,8 @@ export class NegocioNuevoComponent {
       const negocioCreateRequest: fromList.NegocioCreateRequest = {
         nombre: form.value.nombre,
         direccion: form.value.direccion,
+        ruc: form.value.direccion,
+        tipoRuc: form.value.direccion,
         // Agrega otros campos según tus necesidades
       };
 

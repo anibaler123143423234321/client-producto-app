@@ -15,9 +15,13 @@ import { GeneralService } from '@app/services/general.service';
 })
 export class CategoriaNuevoComponent implements OnInit {
   loading$!: Observable<boolean | null>;
+
+  negocios: { id: number; nombre: string }[] = [];
+  selectedNegocioId: number | undefined;
   idUser: number | undefined;
-  nombreNegocioUsuario: string | undefined;
+  idNegocio: number | undefined;
   idNegocioUser: string | undefined;
+  nombreNegocioUsuario: string | undefined;
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -27,6 +31,25 @@ export class CategoriaNuevoComponent implements OnInit {
 
   ngOnInit(): void {
     this.idUser = this.generalService.usuario$?.id;
+    this.idNegocioUser = this.generalService.usuario$?.negocioId;
+    console.log('ID Usuario:', this.idUser);
+    console.log('ID Negocio User:', this.idNegocioUser);
+
+    if (this.idNegocioUser !== undefined) {
+      this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
+        this.negocios = negocios.map((negocio) => ({
+          id: negocio.id,
+          nombre: negocio.nombre
+        }));
+        console.log('Negocios cargados:', this.negocios);
+
+        const negocioUsuario = negocios.find(
+          (negocio) => negocio.id === parseInt(this.idNegocioUser!)
+        );
+        if (negocioUsuario) {
+          this.nombreNegocioUsuario = negocioUsuario.nombre;
+        }
+      });
 
     // Suscribirse al negocio actual del usuario
     this.negocioService.negocioActual$.subscribe((negocio) => {
@@ -41,6 +64,7 @@ export class CategoriaNuevoComponent implements OnInit {
       this.negocioService.cargarDatosDeNegocios().subscribe();
     }
   }
+}
 
   registrarCategoria(form: NgForm): void {
     if (form.valid) {
@@ -48,7 +72,7 @@ export class CategoriaNuevoComponent implements OnInit {
 
       const categoriaCreateRequest: fromList.CategoriaCreateRequest = {
         nombre: form.value.nombre,
-        negocioId: this.negocioService.userId.toString()
+        negocioId: this.idNegocioUser
       };
       this.store.dispatch(new fromList.Create(categoriaCreateRequest));
     }

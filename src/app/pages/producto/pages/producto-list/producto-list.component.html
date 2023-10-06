@@ -1,3 +1,7 @@
+<div *ngIf="stockActualizado" class="alert alert-success">
+  Stock actualizado correctamente.
+</div>
+
 <app-spinner *ngIf="loading$ | async"></app-spinner>
 <section class="container">
   <!-- Productos Agregados -->

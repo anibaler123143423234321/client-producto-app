@@ -67,8 +67,9 @@ export class FetchProductError implements Action {
 // En save.actions.ts
 export class Update implements Action {
   readonly type = Types.UPDATE_PRODUCT;
-  constructor(public payload: { productoId: number; nuevoProducto: any }) {}
+  constructor(public payload: { productoId: number, nuevoProducto: ProductoResponse }) {}
 }
+
 
 export class UpdateSuccess implements Action {
   readonly type = Types.UPDATE_PRODUCT_SUCCESS;
