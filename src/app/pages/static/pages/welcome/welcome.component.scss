@@ -17,7 +17,20 @@ mat-card {
   text-align: center;
   margin-top: 20px;
 }
+
 .responsive-image {
   max-width: 100%;
   height: auto;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Ajusta el margen superior según sea necesario */
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 400px; /* Ajusta la altura máxima de la imagen según sea necesario */
 }

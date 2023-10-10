@@ -1,3 +1,5 @@
+// Importa las dependencias necesarias
+
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
@@ -10,6 +12,9 @@ import * as fromRoot from '@app/store';
 import * as fromActionsL from '@app/pages/compra/store/save/save.actions'; // Importa la acción Create
 import { CompraService } from '@app/services/CompraService';
 import { GeneralService } from '@app/services/general.service';
+import { interval } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-user-list',
@@ -40,25 +45,33 @@ export class UserListComponent implements OnInit {
     this.store.dispatch(new fromActions.ListUsers());
     this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
 
-    // Utiliza CompraService para cargar los datos de compras
+    // Llama a cargarDatosDeCompras inicialmente
     this.CompraService.cargarDatosDeCompras().subscribe((compras) => {
-      console.log('Datos de compras cargados:', compras); // Agrega el console.log para verificar los datos
+      console.log('Datos de compras cargados:', compras);
       console.log('idNegocioUser:', this.idNegocioUser);
 
-      this.compras$ = of(compras); // Asigna los datos de compras a compras$
+      this.compras$ = of(compras);
 
-    // Dentro del ngOnInit
-    this.users$.subscribe((users) => {
-      if (users) {
-        // Filtra los usuarios que tienen el mismo idNegocioUser
-        this.filteredUsers = users.filter((user) => user.negocioId === this.idNegocioUser);
+      this.users$.subscribe((users) => {
+        if (users) {
+          this.filteredUsers = users.filter((user) => user.negocioId === this.idNegocioUser);
+          this.userComprasMap = this.filterComprasByUser(this.filteredUsers);
+        }
+      });
+    });
+
+    // Llama a cargarDatosDeCompras cada 10 segundos
+    interval(10000) // Intervalo de 10 segundos
+      .pipe(
+        switchMap(() => this.CompraService.cargarDatosDeCompras())
+      )
+      .subscribe((compras) => {
+        console.log('Datos de compras actualizados automáticamente:', compras);
+        this.compras$ = of(compras);
         this.userComprasMap = this.filterComprasByUser(this.filteredUsers);
-      }
-    });
-    });
-
-
+      });
   }
+
 
 
   // Función de filtro de usuarios
@@ -132,10 +145,6 @@ export class UserListComponent implements OnInit {
   }
 
   editarEstado(user: UserResponse, compra: CompraResponse): void {
-    console.log('Editar estado llamado'); // Agrega este log para verificar
-    console.log('Editar Estado - Usuario:', user);
-    console.log('Editar Estado - Compra:', compra);
-
     const estadosPosibles: string[] = [
       'Pendiente Por Revisar',
       'Despachado',
@@ -149,28 +158,26 @@ export class UserListComponent implements OnInit {
     if (nuevoEstado && estadosPosibles.includes(nuevoEstado)) {
       const compraId = compra.id;
 
-      // Aquí debes implementar la lógica para actualizar el estado de la compra
-      // Puedes usar una función o un servicio para hacer esto
+      this.CompraService.actualizarEstadoCompra(compraId, nuevoEstado).subscribe(
+        (updatedCompra: CompraResponse) => {
+          console.log('Nuevo Estado:', nuevoEstado);
+          console.log('Compra ID:', compraId);
 
-      console.log('Nuevo Estado:', nuevoEstado);
-      console.log('Compra ID:', compraId);
+          this.estadoEditadoExitoso = true;
+          this.mensajeExito = 'Estado Cambiado con Éxito';
 
-      // Despacha la acción para actualizar el estado de la compra
-      this.store.dispatch(new fromActionsL.UpdateEstado(compraId, nuevoEstado));
-
-      // Establece las variables para mostrar el mensaje de éxito
-      this.estadoEditadoExitoso = true;
-      this.mensajeExito = 'Estado Cambiado con Éxito';
-
-      // Configura un temporizador para ocultar el mensaje después de 5 segundos
-      setTimeout(() => {
-        this.estadoEditadoExitoso = false;
-        this.mensajeExito = '';
-      }, 5000); // 5000 milisegundos = 5 segundos
+          setTimeout(() => {
+            this.estadoEditadoExitoso = false;
+            this.mensajeExito = '';
+          }, 5000);
+        },
+        (error) => {
+          console.error('Error al actualizar el estado de compra:', error);
+          // Manejar el error aquí, por ejemplo, mostrar un mensaje de error al usuario
+        }
+      );
     } else {
       console.log('Operación de actualización cancelada o estado no válido.');
     }
   }
-
-
 }

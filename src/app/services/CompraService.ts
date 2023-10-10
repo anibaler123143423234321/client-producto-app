@@ -31,4 +31,21 @@ export class CompraService {
   setCompras(compras: CompraResponse[]) {
     this.comprasSubject.next(compras);
   }
+
+   // Agrega este método para actualizar el estado de compra
+   actualizarEstadoCompra(compraId: number, nuevoEstado: string): Observable<CompraResponse> {
+    const updateData = { estadoCompra: nuevoEstado }; // Datos para la actualización
+
+    // Realiza una solicitud HTTP PUT para actualizar el estado de compra
+    return this.httpClient.put<CompraResponse>(`${environment.url}gateway/compra/${compraId}`, updateData).pipe(
+      tap((updatedCompra: CompraResponse) => {
+        console.log('Estado de compra actualizado con éxito:', updatedCompra);
+      }),
+      catchError((error) => {
+        console.error('Error al actualizar el estado de compra:', error);
+        throw error; // Puedes personalizar el manejo de errores según tus necesidades
+      })
+    );
+  }
+
 }

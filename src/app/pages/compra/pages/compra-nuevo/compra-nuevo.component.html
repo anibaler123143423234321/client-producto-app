@@ -10,6 +10,24 @@
   </mat-form-field>
 
   <mat-form-field>
+    <mat-label>Tipo de Envío</mat-label>
+    <select matNativeControl [(ngModel)]="tipoEnvio" name="tipoEnvio" required>
+      <option value="Recojo Presencial">Recojo Presencial</option>
+      <option value="Envío Delivery">Envío Delivery</option>
+    </select>
+  </mat-form-field>
+
+
+  <mat-form-field>
+    <mat-label>Tipo de Pagó</mat-label>
+    <select matNativeControl [(ngModel)]="tipoDePago" name="tipoDePago" required>
+      <option value="Pago Virtual">Pagó Virtual</option>
+      <option value="Pago Presencial">Pagó Presencial</option>
+    </select>
+  </mat-form-field>
+
+
+  <mat-form-field>
     <mat-label>Cantidad</mat-label>
     <input matInput type="number" [(ngModel)]="cantidad" name="cantidad" required min="0">
     <!-- Agrega min="0" para evitar valores negativos -->

@@ -41,6 +41,7 @@ export class ProductoNuevoComponent implements OnInit {
     console.log('ID Negocio User:', this.idNegocioUser);
 
     if (this.idNegocioUser !== undefined) {
+      // Carga los datos de negocios una vez en la inicialización del componente
       this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
         this.negocios = negocios.map((negocio) => ({
           id: negocio.id,
@@ -56,11 +57,14 @@ export class ProductoNuevoComponent implements OnInit {
         }
       });
 
+      // Carga las categorías específicas del negocio del usuario
       this.categoriaService.cargarCategorias().subscribe((categorias) => {
-        this.categorias = categorias.map((categoria) => ({
-          id: categoria.id.toString(),
-          nombre: categoria.nombre
-        }));
+        this.categorias = categorias
+          .filter((categoria) => categoria.negocioId === this.idNegocioUser)
+          .map((categoria) => ({
+            id: categoria.id.toString(),
+            nombre: categoria.nombre
+          }));
         console.log('Categorías cargadas:', this.categorias);
       });
     }

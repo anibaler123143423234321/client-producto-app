@@ -16,6 +16,7 @@ export class RegistrationComponent implements OnInit {
   loading$! : Observable<boolean | null>;
   negocios: { id: number; nombre: string }[] = [];
   selectedNegocioId: number | undefined;
+  photoLoaded!: string;
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -51,7 +52,8 @@ ngOnInit(): void {
           username: form.value.username,
           email: form.value.email,
           password: form.value.password,
-          negocioId: this.selectedNegocioId?.toString() // Convertir a cadena
+          negocioId: this.selectedNegocioId?.toString(), // Convertir a cadena
+          dni: form.value.dni,
         }
 
         this.store.dispatch(new fromUser.SignUpEmail(userCreateRequest));
@@ -59,5 +61,10 @@ ngOnInit(): void {
 
   }
 
+  onFilesChanged(url: any): void {
+    if (url) {
+      this.photoLoaded = url;
+    }
+  }
 
 }

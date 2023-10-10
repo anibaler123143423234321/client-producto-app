@@ -1,55 +1,101 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { UserState } from '@app/store/user/user.reducer';
-import * as UserActions from '@app/store/user/user.actions';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { UserResponse } from '../../user.models';
+import * as fromActions from '@app/store/user/user.actions';
+import * as fromSelectors from '@app/store/user/user.selectors';
 import { GeneralService } from '@app/services/general.service';
+import * as fromRoot from '@app/store';
 
 @Component({
   selector: 'app-user-rol',
   templateUrl: './user-rol.component.html',
 })
 export class UserRolComponent implements OnInit {
-  userRoleForm: FormGroup;
-  errorMessage: string | null;
+  users$: Observable<UserResponse[] | null>;
+  loading$: Observable<boolean | null>;
+  searchTerm: string = '';
+  filteredUsers: UserResponse[] = [];
+
+  estadoEditadoExitoso: boolean = false;
+  mensajeExito = '';
+
+  idNegocioUser: string | undefined;
 
   constructor(
-    private fb: FormBuilder,
-    private store: Store<UserState>,
-    private generalService: GeneralService
+    private store: Store<fromRoot.State>,
+    public GeneralService: GeneralService
   ) {
-    this.userRoleForm = this.fb.group({
-      username: ['', Validators.required],
-      newRole: ['', Validators.required],
-    });
-    this.errorMessage = null;
+    this.users$ = this.store.select(fromSelectors.getUsers);
+    this.loading$ = this.store.select(fromSelectors.getLoading);
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.store.dispatch(new fromActions.ListUsers());
+    this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
 
-  onChangeRole() {
-    if (this.userRoleForm.valid) {
-      const username = this.userRoleForm.value.username;
-      const newRole = this.userRoleForm.value.newRole;
+    this.users$.subscribe((users) => {
+      if (users) {
+        this.filteredUsers = users.filter(
+          (user) => user.negocioId === this.idNegocioUser
+        );
+      }
+    });
+  }
 
-      this.store
-        .select((state) => state.user)
-        .pipe(
-          catchError((error) => {
-            this.errorMessage = error;
-            return [];
-          })
-        )
-        .subscribe((user) => {
-          if (user) {
-            // Aquí puedes usar user de manera segura, ya que TypeScript sabe que user no es nulo
-            this.store.dispatch(UserActions.changeUserRole({ username, newRole }));
-          } else {
-            // Manejar el caso en que user sea nulo
-            this.errorMessage = 'No se pudo obtener la información del usuario.';
-          }
-        });
+  filterUsers(users: UserResponse[], term: string): UserResponse[] {
+    term = term.toLowerCase();
+    return users.filter((user) => {
+      if (user.role) {
+        return (
+          user.id.toString().includes(term) ||
+          user.username.toLowerCase().includes(term) ||
+          user.nombre.toLowerCase().includes(term) ||
+          user.apellido.toLowerCase().includes(term) ||
+          user.telefono.toLowerCase().includes(term) ||
+          user.email.toLowerCase().includes(term) ||
+          user.role.toLowerCase().includes(term)
+        );
+      }
+      return false;
+    });
+  }
+
+  updateFilteredUsers() {
+    if (this.users$) {
+      this.users$.subscribe((users) => {
+        if (users) {
+          this.filteredUsers = this.filterUsers(users, this.searchTerm);
+        }
+      });
+    }
+  }
+
+  // Cambiar el rol del usuario utilizando la acción changeUserRole
+  cambiarRol(user: UserResponse): void {
+    const rolesPosibles: string[] = ['USER', 'ADMIN', 'SUPERADMIN'];
+
+    const nuevoRol = prompt(
+      'Ingrese el nuevo rol:\n' + rolesPosibles.join(', ')
+    );
+
+    if (nuevoRol && rolesPosibles.includes(nuevoRol)) {
+      const username = user.username;
+
+      // Despacha la acción changeUserRole
+      this.store.dispatch(
+        fromActions.changeUserRole({ username: username, newRole: nuevoRol })
+      );
+
+      this.estadoEditadoExitoso = true;
+      this.mensajeExito = 'Rol Cambiado con Éxito';
+
+      setTimeout(() => {
+        this.estadoEditadoExitoso = false;
+        this.mensajeExito = '';
+      }, 5000);
+    } else {
+      console.log('Operación de cambio de rol cancelada o rol no válido.');
     }
   }
 }

@@ -5,4 +5,6 @@ export interface Negocio{
   fechaCreacion?: string;
   ruc: string;
   tipoRuc: string;
+  picture?: string;
+  pictureQr?: string;
 }

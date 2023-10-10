@@ -1,32 +1,54 @@
-  @import 'styles/colors';
+// En tu archivo SCSS
+@import 'styles/colors';
 
-  mat-card {
-    width: 450px;
-    text-align: center;
-    margin-top: 20px;
-  }
+.mat-card {
+  width: 450px;
+  text-align: center;
+  margin-top: 20px;
+}
 
-  mat-form-field {
-    width: 400px;
-  }
+.mat-form-field {
+  width: 400px;
+}
 
-  .personal {
-    &__photo{
-      display: flex;
-      justify-content: center;
-    }
+.personal {
+  &__photo {
+    display: flex;
+    justify-content: center;
   }
+}
 
-  .photo{
-    display: inline-flex;
-    align-items: center;
-    align-content: center;
-    padding-bottom: 20px;
-    flex-direction: column;
-    border-radius: 0%;
-    width: 150px;
-    height: 150px;
-    &__img {
-      margin-bottom: 16px;
-    }
+.photo {
+  display: inline-flex;
+  align-items: center;
+  align-content: center;
+  padding-bottom: 20px;
+  flex-direction: column;
+  border-radius: 0%;
+  width: 150px;
+  height: 150px;
+  &__img {
+    margin-bottom: 16px;
   }
+}
+
+.photo2 {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  padding-bottom: 20px;
+  flex-direction: column;
+  border-radius: 0%;
+  width: 150px;
+  height: 150px;
+  &__img2 {
+    margin-bottom: 16px;
+  }
+}
+
+/* Ajusta el margen superior del elemento de texto */
+.photo2 button {
+  margin-top: 10px; /* Puedes ajustar el valor según tus necesidades */
+}
+
+

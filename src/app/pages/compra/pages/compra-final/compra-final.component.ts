@@ -23,6 +23,10 @@ export class CompraFinalComponent implements OnInit, OnDestroy {
   productosSubscription: Subscription | null = null;
   actualizacionesCompletadas = 0; // Contador para rastrear actualizaciones completadas
 
+  tipoEnvio: string | undefined;
+tipoDePago: string | undefined;
+
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -100,17 +104,23 @@ export class CompraFinalComponent implements OnInit, OnDestroy {
       console.warn('Ya estás suscrito a productos$, evitando suscripción duplicada.');
     }
 
-    // Continúa con el resto del código para realizar la compra
-    this.arrayCompra.forEach((compra) => {
-      this.store.dispatch(new fromActions.Create(compra));
-    });
+// Continúa con el resto del código para realizar la compra
+this.arrayCompra.forEach((compra) => {
+  // Agrega tipoEnvio y tipoDePago a cada compra
+  compra.tipoEnvio = this.tipoEnvio;
+  compra.tipoDePago = this.tipoDePago;
 
-    this.arrayCompra = [];
+  this.store.dispatch(new fromActions.Create(compra));
+});
 
-    this.compraRealizada = true;
+    // Limpia el carrito después de realizar la compra
+  this.arrayCompra = [];
+  this.CarritoService.clearCart(); // Agrega esta línea
 
-    setTimeout(() => {
-      this.compraRealizada = false;
-    }, 3000);
-  }
+  this.compraRealizada = true;
+
+  setTimeout(() => {
+    this.compraRealizada = false;
+  }, 3000);
+}
 }

@@ -9,19 +9,34 @@
         <li class="cards__item card-item">
           <div *ngIf="compraGroups[fechaCompra] && compraGroups[fechaCompra].length > 0">
             <h3>Nombre del Usuario: {{ nombreUsuario }} {{ apellidoUsuario }}</h3>
-            <p>Fecha de Compra: {{ fechaCompra | date : "d/M/yyyy" }}</p>
+
+            <!-- <p>Fecha de Compra: {{ fechaCompra | date : "d/M/yyyy HH:mm:ss" }}</p>
+            -->
             <p>Codigos de las Compras: <span *ngFor="let compra of compraGroups[fechaCompra]; let last = last">{{ compra.id }}{{ !last ? ', ' : '' }}</span></p>
-            <p>Codigos de los Productos: <span *ngFor="let compra of compraGroups[fechaCompra]; let last = last">{{ compra.productoId }}{{ !last ? ', ' : '' }}</span></p>
+            <p>Codigos de los Productos: <span *ngFor="let compra of compraGroups[fechaCompra]; let last = last">{{ compra.productoId }}
+              ({{ compra.cantidad }} cant)
+              {{ !last ? ', ' : '' }}</span></p>
+
             <p>Nombre del Producto:
               <ng-container *ngFor="let compra of compraGroups[fechaCompra]; let last = last">
                 {{ compra.titulo }}
                 ({{ compra.cantidad }} cant)
                 $ {{ compra.precioCompra.toFixed(2) }}
+                {{ fechaCompra | date : "d/M/yyyy HH:mm:ss" }}
                 {{ !last ? ', ' : '' }}
               </ng-container>
             </p>
             <p>Precio Total de los Productos a pagar: $ {{ getTotalPrecio(compraGroups[fechaCompra]) }}</p>
-            <p>Estado: {{ compraGroups[fechaCompra][0].estadoCompra }}</p>
+
+
+            <p>Estado:
+              <ng-container *ngFor="let compra of compraGroups[fechaCompra]; let last = last">
+                {{ compra.titulo }}
+                ({{ compra.estadoCompra }})
+                {{ !last ? ', ' : '' }}
+              </ng-container>
+            </p>
+
             <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
             <div *ngIf="isAdmin()">
               <button mat-button (click)="editarEstado(compraGroups[fechaCompra][0])">Editar Estado</button>

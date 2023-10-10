@@ -198,12 +198,18 @@ export class CompraListComponent implements OnInit {
   }
 
 
-// Actualiza esta función para agrupar por fechas
+// Actualiza esta función para agrupar solo por minuto
 groupComprasByFecha(compras: CompraResponse[]): { [key: string]: CompraResponse[] } {
   const groupedCompras: { [key: string]: CompraResponse[] } = {};
 
   compras.forEach((compra) => {
-    const fechaCompraKey = new Date(compra.fechaCompra).toDateString(); // Usar la fecha sin la hora
+    const fechaCompraKey = new Date(compra.fechaCompra).toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }); // Usar la fecha con hora y minutos
     if (!groupedCompras[fechaCompraKey]) {
       groupedCompras[fechaCompraKey] = [];
     }
@@ -212,6 +218,7 @@ groupComprasByFecha(compras: CompraResponse[]): { [key: string]: CompraResponse[
 
   return groupedCompras;
 }
+
 
 
 getTotalPrecio(compras: CompraResponse[]): string {
@@ -223,6 +230,12 @@ getTotalPrecio(compras: CompraResponse[]): string {
 objectKeys(obj: any): string[] {
   return Object.keys(obj);
 }
+
+getTotalCantidad(compras: CompraResponse[]): number {
+  const totalCantidad = compras.reduce((sum, compra) => sum + compra.cantidad, 0);
+  return totalCantidad;
+}
+
 
 
 }

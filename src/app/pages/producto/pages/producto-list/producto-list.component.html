@@ -1,38 +1,46 @@
+<!-- Mensaje de éxito
 <div *ngIf="stockActualizado" class="alert alert-success">
   Stock actualizado correctamente.
 </div>
+-->
 
 <app-spinner *ngIf="loading$ | async"></app-spinner>
 <section class="container">
   <!-- Productos Agregados -->
-  <div *ngIf="mostrarTabla" class="productos-agregados">
-    <h2>Tus Productos Agregados</h2>
-    <table class="productos-table">
-      <thead>
-        <tr>
-          <th>Nombre Producto</th>
-          <th>Cantidad</th>
-          <th>Precio</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let compra of arrayCompra">
-          <td>{{ compra.titulo }}</td>
-          <td>{{ compra.cantidad }}</td>
-          <td>{{ compra.precioCompra }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="comprar-btn">
-      <a routerLink="../../compra/final">
-        <mat-icon>shopping_cart</mat-icon>
-        <span class="cart-item-count">{{ cartItemCount }}</span>
-        <span class="go-to-cart">Ir a Comprar</span>
-      </a>
-    </div>
+  <!-- Productos Agregados -->
+<div *ngIf="mostrarTabla" class="productos-agregados">
+  <h2>Tus Productos Agregados</h2>
+  <table class="productos-table">
+    <thead>
+      <tr>
+        <th>Nombre Producto</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let compra of arrayCompra">
+        <td>{{ compra.titulo }}</td>
+        <td>{{ compra.cantidad }}</td>
+        <td>{{ compra.precioCompra }}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="total-label">Precio Total:</td>
+        <td class="total-price">{{ calculateTotalPrice() }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="comprar-btn">
+    <button mat-button [routerLink]="['../../compra/final']" class="no-underline">
+      <span class="go-to-cart">Ir a Comprar</span>
+    </button>
   </div>
 
-  <div>
+
+</div>
+
+
+  <div class="categoria-container">
     <label for="categoria">Selecciona una categoría:</label>
     <select id="categoria" [(ngModel)]="selectedCategoria" (change)="filterByCategory()">
       <option value="-1">Todas las categorías</option>
@@ -41,14 +49,13 @@
   </div>
 
 
+
   <div class="cards-container">
     <ul class="cards">
       <li class="cards__item" *ngFor="let producto of filteredProductos$ | async">
         <mat-card class="example-card">
           <mat-card-header>
             <mat-card-title >Nombre del Producto: {{ producto.nombre }}</mat-card-title>
-            <mat-card-subtitle >NegocioId del Producto {{ producto.negocioId }}</mat-card-subtitle>
-            <mat-card-subtitle >CategoriaId del Producto {{ producto.categoriaId }}</mat-card-subtitle>
             <mat-card-subtitle >Precio del Producto: {{ producto.precio }}</mat-card-subtitle>
             <mat-card-subtitle >Stock del Producto: {{ producto.stock }}</mat-card-subtitle>
           </mat-card-header>
@@ -94,3 +101,9 @@
     </button>
   </div>
 </section>
+
+<!-- Icono del carrito como imagen decorativa -->
+<div class="cart-icon">
+  <mat-icon>shopping_cart</mat-icon>
+  <span class="cart-item-count">{{ cartItemCount }}</span>
+</div>

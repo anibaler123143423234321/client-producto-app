@@ -16,6 +16,8 @@ import { CompraCreateRequest } from '../../store/save'; // Asegúrate de importa
 export class CompraNuevoComponent implements OnInit {
   userId: number = 0;
   nombreProducto: string = '';
+  tipoEnvio: string = '';
+  tipoDePago: string = '';
   nombreUsuario: string | undefined;
   apellidoUsuario: string | undefined;
   productoId: number = 0;
@@ -71,6 +73,12 @@ export class CompraNuevoComponent implements OnInit {
   realizarCompra() {
     const estadoCompra = 'Pendiente Por Revisar';
 
+    // Verifica si algún campo obligatorio está vacío
+  if (!this.nombreProducto || !this.tipoEnvio || !this.tipoDePago || this.cantidad <= 0) {
+    console.log('Todos los campos deben llenarse correctamente para realizar la compra');
+    return; // Evita realizar la compra si algún campo está incompleto
+  }
+
     if (this.cantidad <= 0) {
       console.log('La cantidad debe ser mayor que cero para realizar la compra');
       return; // Evita realizar la compra si la cantidad no es válida
@@ -89,6 +97,8 @@ export class CompraNuevoComponent implements OnInit {
       userId: this.userId,
       precioCompra: this.precio,
       estadoCompra: estadoCompra,
+      tipoEnvio: this.tipoEnvio,
+      tipoDePago: this.tipoDePago
     };
 
     // Llama al servicio para guardar la compra en el backend
@@ -97,7 +107,7 @@ export class CompraNuevoComponent implements OnInit {
     // Actualiza el stock del producto restando la cantidad comprada
     const nuevoProducto = {
       id: this.productoId,
-      nombre: '', // Debes proporcionar el nombre del producto
+      nombre: this.nombreProducto,
       picture: '', // Debes proporcionar la URL de la imagen del producto
       precio: 0, // Debes proporcionar el precio del producto
       stock: this.stockDisponible - this.cantidad, // Calcula el nuevo stock

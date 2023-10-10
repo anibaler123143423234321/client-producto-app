@@ -15,6 +15,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { SpinnerModule } from '@app/shared/indicators';
 
 import { MatSelectModule } from '@angular/material/select';
+import { EntityPhotoModule } from '@app/shared/layouts';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatCardModule,
     FlexLayoutModule,
-    SpinnerModule
+    SpinnerModule,
+    EntityPhotoModule
 
   ]
 })

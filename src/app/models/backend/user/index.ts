@@ -8,5 +8,7 @@ export interface User{
   token: string;
   role?: string;
   negocioId?: string;
-  dni?: number; // Agregar el campo dni de tipo number
+  dni?: string; // Agregar el campo dni de tipo number
+  picture?: string;
+
 }

@@ -10,7 +10,6 @@
   Compra realizada
 </div>
 
-
 <table *ngIf="mostrarTabla">
   <thead>
     <tr>
@@ -28,3 +27,18 @@
     </tr>
   </tbody>
 </table>
+
+<!-- Agrega los select para Tipo de Envío y Tipo de Pago -->
+<div *ngIf="mostrarTabla">
+  <label for="tipoEnvio">Tipo de Envío:</label>
+  <select id="tipoEnvio" [(ngModel)]="tipoEnvio" name="tipoEnvio" required>
+    <option value="Recojo Presencial">Recojo Presencial</option>
+    <option value="Envío Delivery">Envío Delivery</option>
+  </select>
+
+  <label for="tipoDePago">Tipo de Pago:</label>
+  <select id="tipoDePago" [(ngModel)]="tipoDePago" name="tipoDePago" required>
+    <option value="Pago Virtual">Pago Virtual</option>
+    <option value="Pago Presencial">Pago Presencial</option>
+  </select>
+</div>

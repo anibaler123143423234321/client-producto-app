@@ -2,22 +2,20 @@
   <div class="row">
     <mat-card>
       <mat-card-title *ngIf="nombreNegocioUsuario" >Bienvenido a :
-      {{ nombreNegocioUsuario }}
+        {{ nombreNegocioUsuario }}
       </mat-card-title>
 
-      <mat-card-subtitle
-        >Tu destino para compras convenientes</mat-card-subtitle
-      >
+      <mat-card-subtitle>Tu destino para compras convenientes</mat-card-subtitle>
+
       <mat-card-content>
         <p>
-          En este Minimarket nos esforzamos por brindarte la mejor experiencia
-          de compra. Nuestro compromiso es ofrecerte productos de calidad y un
-          servicio excepcional.
+          En este Minimarket nos esforzamos por brindarte la mejor experiencia de compra. Nuestro compromiso es ofrecerte productos de calidad y un servicio excepcional.
         </p>
-        <!-- Agrega la imagen aquí con una clase CSS para hacerla responsive -->
-        <img class="responsive-image" src="assets/img7.jpg" alt="Mi Imagen" />
+        <!-- Utiliza la primera imagen de negocios como ejemplo -->
+        <div class="image-container">
+          <img class="responsive-image" [src]="negocios[0]?.picture" alt="Imagen del Negocio" />
+        </div>
       </mat-card-content>
     </mat-card>
   </div>
 </section>
-

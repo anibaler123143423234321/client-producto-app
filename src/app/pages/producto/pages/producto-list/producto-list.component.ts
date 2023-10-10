@@ -248,4 +248,16 @@ export class ProductoListComponent implements OnInit {
 
     return uniqueProductIds.size;
   }
+
+  calculateTotalPrice(): number {
+    let totalPrice = 0;
+
+    for (const compra of this.arrayCompra) {
+      totalPrice += compra.cantidad * compra.precioCompra;
+    }
+
+    return totalPrice;
+  }
+
+
 }

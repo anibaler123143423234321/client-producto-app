@@ -9,6 +9,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [CompraFinalComponent],
@@ -21,7 +23,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatCardModule,
     MatFormFieldModule,
     MatToolbarModule,
-    MatSelectModule
+    MatSelectModule,
+    FormsModule, // Asegúrate de importar FormsModule aquí
+    MatIconModule, // Asegúrate de importar MatIconModule aquí
+
   ]
 })
 export class CompraFinalModule {}

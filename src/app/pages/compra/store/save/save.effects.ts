@@ -5,7 +5,7 @@ import { NotificationService } from '@app/services';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, delay, map, switchMap, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import * as fromActions from './save.actions';
+import * as fromActions from '@app/pages/compra/store/save/save.actions'; // Asegúrate de que esto esté importado correctamente
 import { CompraCreateRequest, CompraResponse } from './save.models';
 import { environment } from 'environments/environment';
 
@@ -68,23 +68,6 @@ export class SaveEffectsCompra {
         )
     )
   )
-);
-
-updateEstado = createEffect(() =>
-this.actions.pipe(
-  ofType(fromActions.Types.UPDATE_ESTADO), // Escucha la acción UpdateEstado
-  switchMap((action: fromActions.UpdateEstado) =>
-    this.httpClient.put<CompraResponse>(`${environment.url}gateway/compra/${action.compraId}`, { estadoCompra: action.estadoCompra })
-      .pipe(
-        tap(() => {
-           this.router.navigate(['user/list']);
-          console.log('Estado de compra actualizado con éxito');
-        }),
-        map((updatedCompra: CompraResponse) => new fromActions.UpdateEstadoSuccess(updatedCompra)),
-        catchError(err => of(new fromActions.UpdateEstadoError(err.message)))
-      )
-  )
-)
 );
 
 

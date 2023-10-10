@@ -1,4 +1,4 @@
-// En CategoriaNuevoComponent
+// categoria-nuevo.component.ts
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -35,36 +35,33 @@ export class CategoriaNuevoComponent implements OnInit {
     console.log('ID Usuario:', this.idUser);
     console.log('ID Negocio User:', this.idNegocioUser);
 
-    if (this.idNegocioUser !== undefined) {
-      this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
-        this.negocios = negocios.map((negocio) => ({
-          id: negocio.id,
-          nombre: negocio.nombre
-        }));
-        console.log('Negocios cargados:', this.negocios);
+    // Carga los datos de negocios una vez en la inicialización del componente
+    this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
+      this.negocios = negocios.map((negocio) => ({
+        id: negocio.id,
+        nombre: negocio.nombre
+      }));
+      console.log('Negocios cargados:', this.negocios);
 
-        const negocioUsuario = negocios.find(
-          (negocio) => negocio.id === parseInt(this.idNegocioUser!)
-        );
-        if (negocioUsuario) {
-          this.nombreNegocioUsuario = negocioUsuario.nombre;
-        }
-      });
+      const negocioUsuario = negocios.find(
+        (negocio) => negocio.id === parseInt(this.idNegocioUser!)
+      );
+      if (negocioUsuario) {
+        this.nombreNegocioUsuario = negocioUsuario.nombre;
+      }
+    });
 
-    // Suscribirse al negocio actual del usuario
+    // ...
+
+    // Suscríbete al negocio actual del usuario
     this.negocioService.negocioActual$.subscribe((negocio) => {
       if (negocio) {
         this.nombreNegocioUsuario = negocio.nombre;
       }
     });
 
-    // Cargar los datos de negocios
-    if (this.idUser !== undefined) {
-      this.negocioService.userId = this.idUser;
-      this.negocioService.cargarDatosDeNegocios().subscribe();
-    }
+    // ...
   }
-}
 
   registrarCategoria(form: NgForm): void {
     if (form.valid) {

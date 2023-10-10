@@ -1,21 +1,54 @@
-<div>
-  <h2>Cambiar Rol de Usuario</h2>
-  <form [formGroup]="userRoleForm" (submit)="onChangeRole()">
-    <div class="form-group">
-      <label for="username">Nombre de Usuario:</label>
-      <input type="text" id="username" formControlName="username" required>
-    </div>
-    <div class="form-group">
-      <label for="newRole">Nuevo Rol:</label>
-      <select id="newRole" formControlName="newRole" required>
-        <option value="USER">Usuario</option>
-        <option value="ADMIN">Administrador</option>
-        <option value="SUPERADMIN">Super Administrador</option>
-      </select>
-    </div>
-    <button type="submit">Cambiar Rol</button>
-  </form>
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
+<div class="search-container">
+  <label for="searchInput">Buscar usuarios</label>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Escribe aquí..."
+    [(ngModel)]="searchTerm"
+    (input)="updateFilteredUsers()"
+    class="search-input"
+  />
 </div>
+
+<div *ngIf="loading$ | async; else loadedContent" class="loading-message">
+  Loading...
+</div>
+
+<!-- Tabla de usuarios con filtrado -->
+<!-- Tabla de usuarios con filtrado -->
+<ng-template #loadedContent>
+  <h2>
+    Lista de Usuarios con sus Compras Pendientes Por Revisar y Despachadas
+  </h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Minimarket</th>
+        <th>Username</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Teléfono</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Acciones</th> <!-- Agregamos esta columna para las acciones -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filteredUsers">
+        <td>{{ user.id }}</td>
+        <td>{{ user.negocioId }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.nombre }}</td>
+        <td>{{ user.apellido }}</td>
+        <td>{{ user.telefono }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          <button (click)="cambiarRol(user)">Cambiar Rol</button>
+        </td> <!-- Agregamos un botón para cambiar el rol -->
+      </tr>
+    </tbody>
+  </table>
+
+</ng-template>
