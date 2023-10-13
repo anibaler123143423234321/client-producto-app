@@ -20,7 +20,7 @@ export class NegocioNuevoComponent {
   constructor(private store: Store<fromRoot.State>) {}
 
   registrarNegocio(form: NgForm): void {
-    if (form.valid) {
+    if (form.valid && this.photoLoaded && this.photoLoadedQr) {
       this.loading$ = of(true); // Establece loading$ en 'true' al comenzar la carga
 
       const negocioCreateRequest: fromList.NegocioCreateRequest = {
@@ -30,6 +30,7 @@ export class NegocioNuevoComponent {
         tipoRuc: form.value.tipoRuc,
         picture: this.photoLoaded,
         pictureQr: this.photoLoadedQr,
+        telefono: form.value.telefono,
         // Agrega otros campos según tus necesidades
       };
 
@@ -41,9 +42,13 @@ export class NegocioNuevoComponent {
     }
   }
 
-  onFilesChanged(url: any): void {
+  onFilesChanged(url: any, isQr: boolean): void {
     if (url) {
-      this.photoLoaded = url;
+      if (isQr) {
+        this.photoLoadedQr = url;
+      } else {
+        this.photoLoaded = url;
+      }
     }
   }
 }

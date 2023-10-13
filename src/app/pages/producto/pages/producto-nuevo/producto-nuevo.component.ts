@@ -71,7 +71,7 @@ export class ProductoNuevoComponent implements OnInit {
   }
 
   registrarProducto(form: NgForm): void {
-    if (form.valid) {
+    if (form.valid && this.photoLoaded) {
       this.loading$ = this.store.pipe(select(fromList.getLoading));
 
       const stockValue = this.stock !== undefined ? Number(this.stock) : 0;

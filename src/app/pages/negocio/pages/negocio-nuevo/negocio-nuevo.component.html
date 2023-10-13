@@ -67,35 +67,51 @@
         <mat-error>Debe ingresar el Tipo de RUC</mat-error>
       </mat-form-field>
 
-      <div class="personal__photo">
-        <div class="photo">
-          <app-entity-photo class="photo__img" [photoURL]="photoLoaded"></app-entity-photo>
-          <button mat-button appFilesUpload (changed)="onFilesChanged($event)">
-            <mat-icon>upload</mat-icon>
-            Subir Imagen de su Negocio
-          </button>
-        </div>
-      </div>
+      <mat-form-field>
+        <mat-label>Ingrese Telefono</mat-label>
+        <input
+          type="text"
+          ngModel
+          name="telefono"
+          required
+          placeholder="980369856"
+          matInput
+        />
+        <mat-error>Debe ingresar su telefono</mat-error>
+      </mat-form-field>
 
-      <div class="personal__photo">
-        <div class="photo2">
-          <app-entity-photo class="photo__img2" [photoURL]="photoLoadedQr"></app-entity-photo>
-          <button mat-button appFilesUpload (changed)="onFilesChanged($event)">
-            <mat-icon>upload</mat-icon>
-            Subir Imagen de su Qr del Negocio
-          </button>
-        </div>
-      </div>
 
+ <!-- Otros campos de formulario -->
+
+ <div class="personal__photo">
+  <div class="photo">
+    <app-entity-photo class="photo__img" [photoURL]="photoLoaded"></app-entity-photo>
+    <button mat-button appFilesUpload (changed)="onFilesChanged($event, false)">
+      <mat-icon>upload</mat-icon>
+      Subir Imagen de su Negocio
+    </button>
+  </div>
+</div>
+
+<div class="personal__photo">
+  <div class="photo2">
+    <app-entity-photo class="photo__img2" [photoURL]="photoLoadedQr"></app-entity-photo>
+    <button mat-button appFilesUpload (changed)="onFilesChanged($event, true)">
+      <mat-icon>upload</mat-icon>
+      Subir Imagen de su Qr del Negocio
+    </button>
+  </div>
+</div>
 
       <button
-        type="submit"
-        mat-raised-button
-        color="primary"
-        [disabled]="f.invalid"
-      >
-        Registrar Negocio
-      </button>
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="f.invalid || !photoLoaded || !photoLoadedQr"
+    >
+      Registrar Negocio
+    </button>
+
     </form>
   </mat-card>
 </section>

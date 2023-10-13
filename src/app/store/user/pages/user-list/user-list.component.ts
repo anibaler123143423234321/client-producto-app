@@ -144,18 +144,21 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  editarEstado(user: UserResponse, compra: CompraResponse): void {
+  cambiarEstado(compra: CompraResponse): void {
     const estadosPosibles: string[] = [
       'Pendiente Por Revisar',
       'Despachado',
       'Pago Completado',
     ];
 
-    const nuevoEstado = prompt(
-      'Ingrese el nuevo estado:\n' + estadosPosibles.join(', ')
-    );
+    const estadoActual = compra.estadoCompra;
+    const indiceActual = estadosPosibles.indexOf(estadoActual);
 
-    if (nuevoEstado && estadosPosibles.includes(nuevoEstado)) {
+    if (indiceActual !== -1) {
+      // Encuentra el siguiente estado en la lista o vuelve al primero si es el último
+      const nuevoIndice = (indiceActual + 1) % estadosPosibles.length;
+      const nuevoEstado = estadosPosibles[nuevoIndice];
+
       const compraId = compra.id;
 
       this.CompraService.actualizarEstadoCompra(compraId, nuevoEstado).subscribe(
@@ -165,6 +168,9 @@ export class UserListComponent implements OnInit {
 
           this.estadoEditadoExitoso = true;
           this.mensajeExito = 'Estado Cambiado con Éxito';
+
+          // Actualiza el estado en la compra actual
+          compra.estadoCompra = nuevoEstado;
 
           setTimeout(() => {
             this.estadoEditadoExitoso = false;
@@ -180,4 +186,5 @@ export class UserListComponent implements OnInit {
       console.log('Operación de actualización cancelada o estado no válido.');
     }
   }
+
 }

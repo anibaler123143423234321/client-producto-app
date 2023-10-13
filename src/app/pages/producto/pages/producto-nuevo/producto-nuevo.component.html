@@ -15,7 +15,8 @@
       <div class="personal__photo">
         <div class="photo">
           <app-entity-photo class="photo__img" [photoURL]="photoLoaded"></app-entity-photo>
-          <button mat-button appFilesUpload (changed)="onFilesChanged($event)">
+          <button
+           mat-button appFilesUpload (changed)="onFilesChanged($event)">
             <mat-icon>upload</mat-icon>
             Subir Imagen
           </button>
@@ -63,14 +64,8 @@
 
       <mat-form-field>
         <mat-label>Ingrese Stock</mat-label>
-        <input
-          type="number"
-          ngModel
-          name="stock"
-          required
-          placeholder="Ingrese Stock"
-          matInput
-        />
+        <input type="number" [(ngModel)]="stock" name="stock" required placeholder="Ingrese Stock" matInput />
+
         <mat-error>Debe ingresar el stock</mat-error>
       </mat-form-field>
 

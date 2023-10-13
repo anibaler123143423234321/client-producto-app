@@ -10,11 +10,9 @@ import { User } from '@app/models/backend/user/index';
 import { Router } from '@angular/router';
 import * as fromActions from '../../store/save';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CompraService } from '@app/services/CompraService';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
 
 @Component({
   selector: 'app-compra-list',
@@ -127,21 +125,19 @@ export class CompraListComponent implements OnInit {
   generarPDF(compraGroups: CompraResponse[][]): void {
     const pdfMake: any = require('pdfmake/build/pdfmake');
     const pdfFonts: any = require('pdfmake/build/vfs_fonts');
-
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-    // Configurar el tamaño del papel a 80 mm x 80 mm (ancho x alto) para una ticketera de 80 mm
+    // Tamaño de página ajustado para ticketera de 80 mm
     const page = {
       width: 80, // 80 mm de ancho
-      height: 210, // 210 mm de alto (tamaño de una ticketera típica)
+      height: 210, // 210 mm de alto (tamaño típico de un recibo)
     };
 
-    // Definir los estilos del documento
     const styles = {
       header: {
-        fontSize: 14, // Tamaño de fuente ajustado
+        fontSize: 12, // Tamaño de fuente ajustado
         bold: true,
-        margin: [0, 5, 0, 10], // Márgenes ajustados
+        margin: [0, 5, 0, 5], // Márgenes ajustados
       },
       info: {
         fontSize: 10,
@@ -149,28 +145,17 @@ export class CompraListComponent implements OnInit {
       },
     };
 
-    // Recorrer cada grupo de compras y generar un PDF separado para cada uno
     compraGroups.forEach((compras, index) => {
-      // Obtener información del usuario y la fecha de la primera compra en el grupo
       const usuario = `${this.nombreUsuario} ${this.apellidoUsuario}`;
       const primeraCompra = compras[0];
-      const fechaCompra = new Date(
-        primeraCompra.fechaCompra
-      ).toLocaleDateString();
-
-      // Obtener IDs de compra y IDs de producto
-      const idsCompra = compras.map((compra) => compra.id.toString()).join(', ');
-      const idsProducto = compras
-        .map((compra) => compra.productoId.toString())
-        .join(', ');
-      const nombresProductos = compras
-        .map((compra) => `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`)
-        .join(', ');
-
-      // Obtener el precio total de los productos en este grupo
+      const fechaCompra = new Date(primeraCompra.fechaCompra).toLocaleDateString();
+      const idsCompra = compras.map((compra) => compra.codigo?.toString()).join(', ');
+      const idsProducto = compras.map((compra) => compra.productoId.toString()).join(', ');
+      const nombresProductos = compras.map((compra) =>
+        `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`
+      ).join(', ');
       const precioTotal = this.getTotalPrecio(compras);
 
-      // Crear el documento PDF con el tamaño de página personalizado y los estilos
       const docDefinition = {
         page: page,
         content: [
@@ -182,21 +167,18 @@ export class CompraListComponent implements OnInit {
           { text: `Codigos de los Productos: ${idsProducto}`, style: 'info' },
           { text: `Nombre del Producto: ${nombresProductos}`, style: 'info' },
           { text: `Precio Total de los Productos a pagar: $${precioTotal}`, style: 'info' },
-          // Agregar un espacio en blanco para separar las compras
           { text: '', margin: [0, 10, 0, 0] },
         ],
-        styles: styles, // Estilos del PDF
+        styles: styles,
       };
 
-      // Usar pdfMake con la configuración personalizada
       pdfMake.vfs = pdfFonts.pdfMake.vfs;
-      const nombreUsuario = this.nombreUsuario || 'Usuario Desconocido'; // Obtén el nombre del usuario o usa un valor predeterminado
-      const nombreArchivo = `boleta_${nombreUsuario}_${index}.pdf`; // Nombre del archivo con el nombre del usuario
+      const nombreUsuario = this.nombreUsuario || 'Usuario Desconocido';
+      const nombreArchivo = `boleta_${nombreUsuario}_${index}.pdf`;
 
       pdfMake.createPdf(docDefinition).download(nombreArchivo);
     });
   }
-
 
 // Actualiza esta función para agrupar solo por minuto
 groupComprasByFecha(compras: CompraResponse[]): { [key: string]: CompraResponse[] } {

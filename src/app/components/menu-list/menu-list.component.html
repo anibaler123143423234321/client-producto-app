@@ -58,6 +58,11 @@
     <span class="navegacion-list-label">Mis Compras</span>
   </a>
 
+  <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="pago/nuevo">
+    <mat-icon>add</mat-icon>
+    <span class="navegacion-list-label">Mis Pagos</span>
+  </a>
+
   <a *ngIf="isAdmin() || isSuperAdmin()" mat-list-item (click)="closeMenu()" routerLink="user/list">
     <mat-icon>add</mat-icon>
     <span class="navegacion-list-label">Ver Usuario-Compras</span>

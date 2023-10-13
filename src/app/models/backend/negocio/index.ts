@@ -7,4 +7,6 @@ export interface Negocio{
   tipoRuc: string;
   picture?: string;
   pictureQr?: string;
+  telefono: string;
+
 }

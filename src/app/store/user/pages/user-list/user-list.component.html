@@ -48,13 +48,9 @@
         <td>
           <ul>
             <li *ngFor="let compra of userComprasMap[user.id]">
-              {{ compra.productoId }} - {{ compra.titulo }} ({{
-                compra.estadoCompra
-              }})
+              {{ compra.codigo }} - {{ compra.titulo }} ({{ compra.estadoCompra }})
               <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
-              <button
-                (click)="editarEstado(user, compra)"
-              >
+              <button (click)="cambiarEstado(compra)">
                 Editar Estado
               </button>
             </li>
