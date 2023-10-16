@@ -54,6 +54,10 @@ ngOnInit(): void {
           password: form.value.password,
           negocioId: this.selectedNegocioId?.toString(), // Convertir a cadena
           dni: form.value.dni,
+          tipoDoc : form.value.tipoDoc,
+          departamento: form.value.departamento,
+          provincia: form.value.provincia,
+          distrito: form.value.distrito,
         }
 
         this.store.dispatch(new fromUser.SignUpEmail(userCreateRequest));

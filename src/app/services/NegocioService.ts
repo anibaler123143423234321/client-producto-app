@@ -41,4 +41,12 @@ export class NegocioService {
   setNegocios(negocios: NegocioResponse[]) {
     this.negociosSubject.next(negocios);
   }
+
+
+  getNegocioById(id: number): Observable<NegocioResponse> {
+    const url = `${environment.url}gateway/negocios/${id}`;
+    return this.httpClient.get<NegocioResponse>(url);
+  }
+
+
 }

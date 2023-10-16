@@ -4,7 +4,7 @@ export interface Compra {
   productoId: number;
   titulo: string;
   precioCompra: number;
-  fechaCompra: string;
+  fechaCompra: string; // Agrega la propiedad fechaCompra de tipo string
   cantidad: number;
   estadoCompra: string;
   tipoEnvio?: string;

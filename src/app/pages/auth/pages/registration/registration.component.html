@@ -64,7 +64,18 @@
 
 
      <mat-form-field>
-      <mat-label>Ingrese su DNI</mat-label>
+      <mat-label>Seleccione Tipo de Documento de Identidad</mat-label>
+      <mat-select ngModel name="tipoDoc" required>
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="Extranjero">Extranjero</mat-option>
+        <mat-option value="Pasaporte">Pasaporte</mat-option>
+      </mat-select>
+      <mat-error>Debe seleccionar su Tipo de Documento de Identidad</mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <mat-label>Ingrese su Numero Documento de Identidad</mat-label>
       <input
         type="text"
         ngModel
@@ -73,7 +84,7 @@
         placeholder="73583958"
         matInput
       />
-      <mat-error>Debe ingresar su DNI</mat-error>
+      <mat-error>Debe ingresar Numero Documento de Identidad</mat-error>
     </mat-form-field>
 
      <mat-form-field>
@@ -134,6 +145,45 @@
         </mat-option>
       </mat-select>
       <mat-error>Debe seleccionar un negocio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Ingrese su Departamento</mat-label>
+      <input
+        type="text"
+        ngModel
+        name="departamento"
+        required
+        placeholder="Lambayeque"
+        matInput
+      />
+      <mat-error>Debe ingresar su Departamento</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Ingrese su Distrito</mat-label>
+      <input
+        type="text"
+        ngModel
+        name="provincia"
+        required
+        placeholder="Ferreñafe"
+        matInput
+      />
+      <mat-error>Debe ingresar su Distrito</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Ingrese su Provincia</mat-label>
+      <input
+        type="text"
+        ngModel
+        name="distrito"
+        required
+        placeholder="Ferreñafe"
+        matInput
+      />
+      <mat-error>Debe ingresar su Provincia</mat-error>
     </mat-form-field>
 
 

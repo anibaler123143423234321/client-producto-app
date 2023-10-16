@@ -6,15 +6,16 @@ export const environment = {
   production: false,
   name:'dev',
   firebase: {
-    config :{
-      apiKey: "AIzaSyBBw_PHD2nfnjWsqCysEdIMPnjh507Qq08",
-      authDomain: "angular-test-6c2ba.firebaseapp.com",
-      projectId: "angular-test-6c2ba",
-      storageBucket: "angular-test-6c2ba.appspot.com",
-      messagingSenderId: "198825047659",
-      appId: "1:198825047659:web:247117caa8d461370aa32e"
+    config : {
+      apiKey: "AIzaSyCXlycEKPSxliqwfgHzUBYHQWMdTIWHdTM",
+      authDomain: "dotval-app.firebaseapp.com",
+      projectId: "dotval-app",
+      storageBucket: "dotval-app.appspot.com",
+      messagingSenderId: "1036953496333",
+      appId: "1:1036953496333:web:9de32d5210bb89dc80de44",
+      measurementId: "G-Z3BPHDP2NK"
     }
   },
-  url:'http://localhost:5555/'
+  url:'https://eureka-back-ea6beef74bbc.herokuapp.com/'
 };
 

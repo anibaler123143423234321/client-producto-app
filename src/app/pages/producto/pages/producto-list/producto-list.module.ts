@@ -11,6 +11,8 @@
   import { MatToolbarModule } from '@angular/material/toolbar'; // Importa MatToolbarModule
   import {MatIconModule} from '@angular/material/icon';
   import { FormsModule } from '@angular/forms';
+  import { MatDialogModule } from '@angular/material/dialog';
+  import { MatInputModule } from '@angular/material/input';
 
   @NgModule({
     declarations: [
@@ -20,6 +22,8 @@
       CommonModule,
       ProductoListRoutingModule,
       MatIconModule,
+      MatDialogModule,
+      MatInputModule,
 
       SpinnerModule,
       MatButtonModule,

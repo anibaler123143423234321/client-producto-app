@@ -10,5 +10,8 @@ export interface User{
   negocioId?: string;
   dni?: string; // Agregar el campo dni de tipo number
   picture?: string;
-
+  departamento: string;
+  provincia: string;
+  distrito: string;
+  tipoDoc: string;
 }

@@ -28,11 +28,20 @@ export class MenuListComponent implements OnInit {
   this.carritoService.clearCart();
   }
 
+
   onSignOut(): void {
+    console.log('onSignOut se ha llamado');
+
+    // Borrar todos los elementos del almacenamiento local
+    localStorage.clear();
+
+    console.log('Toda la caché de localStorage se ha borrado.');
 
     // Emitir el evento para cerrar sesión
     this.signOut.emit();
   }
+
+
 
   isAdmin(): boolean {
     // Verificar si user no es nulo y tiene la propiedad role

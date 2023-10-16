@@ -12,7 +12,7 @@ import * as fromActions from '../../store/save';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CompraService } from '@app/services/CompraService';
-
+import { NegocioService } from '@app/services/NegocioService';
 
 @Component({
   selector: 'app-compra-list',
@@ -33,19 +33,20 @@ export class CompraListComponent implements OnInit {
   idUser: number | undefined;
   nombreUsuario: string;
   apellidoUsuario: string;
+  idNegocioUser: string | undefined;
 
   currentPage = 1;
   itemsPerPage = 15;
   boletaUrl!: SafeUrl;
+  negocioPicture: string = ''; // Declaramos la variable negocioPicture aquí
 
   constructor(
     private store: Store<fromRoot.State>,
     public generalService: GeneralService,
-    private dialog: MatDialog,
     private router: Router,
-    private httpClient: HttpClient,
-    private sanitizer: DomSanitizer,
-    public compraService: CompraService
+    public negocioService: NegocioService,
+    public compraService: CompraService,
+    private httpClient: HttpClient
   ) {
     this.comprasLength = 0;
     this.nombreUsuario = '';
@@ -73,45 +74,21 @@ export class CompraListComponent implements OnInit {
       }
     });
 
+
     this.nombreUsuario = this.generalService.usuario$?.nombre || '';
     this.apellidoUsuario = this.generalService.usuario$?.apellido || '';
     this.idUser = this.generalService.usuario$?.id;
+    this.idNegocioUser = this.generalService.usuario$?.negocioId || '';
+
+  // Obtener la información de negocio.picture
+  if (this.idNegocioUser) {
+    this.negocioService.getNegocioById(Number(this.idNegocioUser)).subscribe((negocio) => {
+      if (negocio && negocio.picture) {
+        this.negocioPicture = negocio.picture;
+      }
+    });
   }
 
-  editarEstado(compra: CompraResponse): void {
-    if (!this.isAdmin()) {
-      return;
-    }
-
-    const estadosPosibles: string[] = [
-      'Pendiente Por Revisar',
-      'Despachado',
-      'Pago Completado',
-    ];
-
-    const nuevoEstado = prompt(
-      'Ingrese el nuevo estado:\n' + estadosPosibles.join(', ')
-    );
-
-    if (nuevoEstado && estadosPosibles.includes(nuevoEstado)) {
-      const compraId = compra.id;
-
-      this.store.dispatch(new fromActions.UpdateEstado(compraId, nuevoEstado));
-
-      this.estadoEditadoExitoso = true;
-      this.mensajeExito = 'Estado Cambiado con Éxito';
-
-      setTimeout(() => {
-        this.estadoEditadoExitoso = false;
-        this.mensajeExito = '';
-      }, 8000);
-    } else {
-      console.log('Operación de actualización cancelada o estado no válido.');
-    }
-  }
-
-  isAdmin(): boolean {
-    return this.generalService.usuario$?.role === 'ADMIN';
   }
 
   navigateToProductoNuevo(): void {
@@ -146,39 +123,55 @@ export class CompraListComponent implements OnInit {
     };
 
     compraGroups.forEach((compras, index) => {
-      const usuario = `${this.nombreUsuario} ${this.apellidoUsuario}`;
-      const primeraCompra = compras[0];
-      const fechaCompra = new Date(primeraCompra.fechaCompra).toLocaleDateString();
-      const idsCompra = compras.map((compra) => compra.codigo?.toString()).join(', ');
-      const idsProducto = compras.map((compra) => compra.productoId.toString()).join(', ');
-      const nombresProductos = compras.map((compra) =>
-        `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`
-      ).join(', ');
-      const precioTotal = this.getTotalPrecio(compras);
+      // Verifica que haya una URL de imagen válida antes de descargarla
+      if (this.negocioPicture) {
+        // Descargar la imagen de Firebase y convertirla en un dato URI
+        this.httpClient.get(this.negocioPicture, { responseType: 'blob' }).subscribe((imageBlob: Blob) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(imageBlob);
+          reader.onloadend = () => {
+            const imagenDataURI = reader.result as string;
 
-      const docDefinition = {
-        page: page,
-        content: [
-          { text: 'Boleta de Compra', style: 'header' },
-          { text: 'Información de las Compras:', style: 'info' },
-          { text: `Nombre del Usuario: ${usuario}`, style: 'info' },
-          { text: `Fecha de Compra: ${fechaCompra}`, style: 'info' },
-          { text: `Codigos de las Compra: ${idsCompra}`, style: 'info' },
-          { text: `Codigos de los Productos: ${idsProducto}`, style: 'info' },
-          { text: `Nombre del Producto: ${nombresProductos}`, style: 'info' },
-          { text: `Precio Total de los Productos a pagar: $${precioTotal}`, style: 'info' },
-          { text: '', margin: [0, 10, 0, 0] },
-        ],
-        styles: styles,
-      };
+            const usuario = `${this.nombreUsuario} ${this.apellidoUsuario}`;
+            const primeraCompra = compras[0];
+            const fechaCompra = new Date(primeraCompra.fechaCompra);
+            const idsCompra = compras.map((compra) => compra.codigo?.toString()).join(', ');
+            const idsProducto = compras.map((compra) => compra.productoId.toString()).join(', ');
+            const nombresProductos = compras.map((compra) =>
+              `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`
+            ).join(', ');
+            const precioTotal = this.getTotalPrecio(compras);
 
-      pdfMake.vfs = pdfFonts.pdfMake.vfs;
-      const nombreUsuario = this.nombreUsuario || 'Usuario Desconocido';
-      const nombreArchivo = `boleta_${nombreUsuario}_${index}.pdf`;
+            const docDefinition = {
+              page: page,
+              content: [
+                { text: 'Boleta de Compra', style: 'header' },
+                { text: 'Información de las Compras:', style: 'info' },
+                { image: imagenDataURI, width: 100, alignment: 'center' },
+                { text: `Nombre del Usuario: ${usuario}`, style: 'info' },
+                { text: `Fecha de Compra: ${fechaCompra}`, style: 'info' },
+                { text: `Codigos de las Compra: ${idsCompra}`, style: 'info' },
+                { text: `Codigos de los Productos: ${idsProducto}`, style: 'info' },
+                { text: `Nombre del Producto: ${nombresProductos}`, style: 'info' },
+                { text: `Precio Total de los Productos a pagar: $${precioTotal}`, style: 'info' },
+                { text: '', margin: [0, 10, 0, 0] },
+              ],
+              styles: styles,
+            };
 
-      pdfMake.createPdf(docDefinition).download(nombreArchivo);
-    });
-  }
+            pdfMake.vfs = pdfFonts.pdfMake.vfs;
+            const nombreUsuario = this.nombreUsuario || 'Usuario Desconocido';
+            const nombreArchivo = `boleta_${nombreUsuario}_${index}.pdf`;
+
+            pdfMake.createPdf(docDefinition).download(nombreArchivo);
+          }
+          });
+        }
+        });
+      }
+
+
+
 
 // Actualiza esta función para agrupar solo por minuto
 groupComprasByFecha(compras: CompraResponse[]): { [key: string]: CompraResponse[] } {
@@ -218,6 +211,12 @@ getTotalCantidad(compras: CompraResponse[]): number {
   return totalCantidad;
 }
 
+
+calcularFechaDiferencia(fechaCompraStr: string): Date {
+  const fechaCompra = new Date(fechaCompraStr);
+  fechaCompra.setHours(fechaCompra.getHours() - 5); // Restar 5 horas
+  return fechaCompra;
+}
 
 
 }

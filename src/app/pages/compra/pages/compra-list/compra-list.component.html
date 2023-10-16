@@ -33,7 +33,7 @@
                     {{ compra.tipoEnvio }} --
                     {{ compra.tipoDePago }} --
                     Total a pagar: $ {{ compra.precioCompra.toFixed(2) }} --
-                    Con fecha compra: {{ compra.fechaCompra | date : 'd/M/yyyy HH:mm:ss' }}
+                    Con fecha compra: {{ calcularFechaDiferencia(compra.fechaCompra) | date : 'd/M/yyyy HH:mm:ss'}}
                   </li>
                 </ul>
               </td>
@@ -46,9 +46,6 @@
                 </ul>
               </td>
               <td>
-                <div *ngIf="isAdmin()">
-                  <button mat-button (click)="editarEstado(compraGroups[fechaCompra][0])">Editar Estado</button>
-                </div>
                 <button mat-button (click)="generarPDF([compraGroups[fechaCompra]])">Descargar Boleta</button>
               </td>
             </tr>

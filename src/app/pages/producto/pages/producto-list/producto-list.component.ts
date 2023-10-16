@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import * as fromRoot from '@app/store';
 import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import * as fromList from '../../store/save';
 import { ProductoResponse } from '../../store/save';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { UserResponse } from '@app/store/user';
 import { GeneralService } from '@app/services/general.service';
 import { CompraCreateRequest } from '@app/pages/compra/store/save';
@@ -13,6 +13,11 @@ import { CarritoService } from '@app/services/CarritoService';
 import { NegocioService } from '@app/services/NegocioService';
 import { CategoriaService } from '@app/services/CategoriaService';
 import { ProductoService } from '@app/services/ProductoService';
+import { User } from '@app/models/backend';
+import {  ElementRef, ViewChild } from '@angular/core';
+import { Producto } from '@app/models/frontend';
+import { MatDialog } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-producto-list',
@@ -20,6 +25,8 @@ import { ProductoService } from '@app/services/ProductoService';
   styleUrls: ['./producto-list.component.scss'],
 })
 export class ProductoListComponent implements OnInit {
+  @Input() user: User | null = null;
+
   productos$!: Observable<ProductoResponse[] | null>;
   userId!: number;
   productoId: number | undefined;
@@ -46,6 +53,19 @@ export class ProductoListComponent implements OnInit {
   filteredProductos$: Observable<ProductoResponse[] | null> = this.productos$;
   categorias: { id: number; nombre: string }[] = [];
   stockActualizado = false; // Variable para controlar el mensaje de confirmación
+  private unsubscribe$ = new Subject<void>();
+
+  @ViewChild('productDetails', { static: true }) productDetails: ElementRef | undefined;
+  selectedProduct: any;
+
+  selectedProductForEdit: ProductoResponse | null = null;
+  newStockValue: number | undefined;
+
+
+  editingStock: boolean = false;
+  selectedProductId: number | null = null;
+  searchTerm: string = '';
+
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -57,28 +77,41 @@ export class ProductoListComponent implements OnInit {
     public productoService: ProductoService
   ) {
     this.selectedCategoria = "-1";
-    // Establecer por defecto "Todas las categorías"
+    // Inicializa las variables aquí para evitar errores de "undefined"
+    this.userId = 0;
+    this.productoId = undefined;
+    this.nombreUsuario = '';
+    this.apellidoUsuario = '';
+
+    // Recupera el usuario desde el localStorage si existe
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user: User = JSON.parse(userData);
+      this.GeneralService.usuario$ = user; // Establece el usuario en GeneralService
+      this.userId = user.id;
+      this.nombreUsuario = user.nombre;
+      this.apellidoUsuario = user.apellido;
+    }
   }
 
   ngOnInit(): void {
     this.store.dispatch(new fromList.Read());
     this.loading$ = this.store.pipe(select(fromList.getLoading));
+
     this.idNegocioUser = this.GeneralService.usuario$?.negocioId;
 
     // Suscríbete a productos$ una vez y úsalo en varias partes del componente
-    this.productos$ = this.store.pipe(select(fromList.getProductos));
-    this.productos$.subscribe((productos) => {
-      if (productos && productos.length > 0) {
-        // Supongamos que idNegocioProducto está en el primer producto de la lista
-        this.idNegocioProducto = productos[0].negocioId;
+    this.productos$ = this.store.pipe(
+      select(fromList.getProductos),
+      takeUntil(this.unsubscribe$) // Unsubscribe al destruir el componente
+    );
 
+     this.productos$.subscribe((productos) => {
+      if (productos && productos.length > 0) {
+        this.idNegocioProducto = productos[0].negocioId;
         console.log('idNegocioUser:', this.idNegocioUser);
         console.log('idNegocioProducto:', this.idNegocioProducto);
-
-        // Agregar un console.log para verificar los productos
         console.log('Productos:', productos);
-
-        // Filtra las categorías para mostrar solo las que pertenecen al negocio del usuario
         this.CategoriaService.cargarCategorias().subscribe((categorias) => {
           this.categorias = categorias.filter(categoria => categoria.negocioId === this.idNegocioUser);
           this.selectedCategoria = "-1"; // Establecer por defecto "Todas las categorías"
@@ -89,16 +122,11 @@ export class ProductoListComponent implements OnInit {
 
     this.arrayCompra = this.CarritoService.getArrayCompra();
     this.cartItemCount = this.calculateUniqueProductCount();
+  }
 
-    this.userId = this.GeneralService.usuario$?.id;
-    this.productoId = this.GeneralService.usuario$?.id;
-    this.nombreUsuario = this.GeneralService.usuario$?.nombre;
-    this.apellidoUsuario = this.GeneralService.usuario$?.apellido;
-
-    console.log('ID Negocio User:', this.idNegocioUser);
-    console.log('Usuario Product List:', this.GeneralService.usuario$);
-    console.log('Nombre Usuario:', this.nombreUsuario);
-    console.log('Apellido Usuario:', this.apellidoUsuario);
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   filterByCategory(): void {
@@ -259,5 +287,106 @@ export class ProductoListComponent implements OnInit {
     return totalPrice;
   }
 
+
+  showProductDetails(product: any): void {
+    this.selectedProduct = product;
+
+  }
+
+  closeProductDetails(): void {
+    this.selectedProduct = null;
+  }
+
+
+
+  isAdmin(): boolean {
+    // Verificar si user no es nulo y tiene la propiedad role
+    return this.GeneralService.usuario$.role === 'ADMIN';
+  }
+
+  isSuperAdmin(): boolean {
+    // Verificar si user no es nulo y tiene la propiedad role
+    return this.GeneralService.usuario$.role  === 'SUPERADMIN';
+  }
+
+// Modifica el método actualizarStock para que reciba un objeto ProductoResponse
+actualizarStock(producto: ProductoResponse, nuevoStock: number): void {
+  this.selectedProductForEdit = producto;
+  this.newStockValue = nuevoStock;
+}
+
+
+
+
+guardarStock(): void {
+  if (this.selectedProductForEdit && this.newStockValue !== undefined) {
+    this.selectedProductForEdit.stock = this.newStockValue;
+
+    // Llama a la función de ProductoService para actualizar el producto
+    this.productoService
+      .actualizarProducto(this.selectedProductForEdit.id, this.selectedProductForEdit)
+      .subscribe(
+        (productoActualizado) => {
+          // La actualización fue exitosa
+          console.log('Producto actualizado:', productoActualizado);
+          this.stockActualizado = true;
+
+          // Cierra el formulario de edición
+          this.cancelarEdicionStock();
+        },
+        (error) => {
+          console.error('Error al actualizar el producto:', error);
+          // Puedes manejar el error aquí si lo deseas
+        }
+      );
+  }
+}
+
+
+
+startEditingStock(producto: ProductoResponse): void {
+  this.editingStock = true;
+  this.selectedProductId = producto.id;
+  this.selectedProductForEdit = producto;
+  this.newStockValue = producto.stock; // Puedes establecer el valor actual del stock aquí
+}
+
+
+  cancelarEdicionStock(): void {
+    this.selectedProductForEdit = null;
+  }
+
+  cerrarFormulario() {
+    this.editingStock = false;
+    this.selectedProductId = null;
+  }
+
+  // Función para filtrar productos por nombre
+  filterProductos(productos: ProductoResponse[], term: string): ProductoResponse[] {
+    term = term.toLowerCase();
+    return productos.filter((producto) => {
+      const nombreEnMinusculas = producto.nombre.toLowerCase();
+      return nombreEnMinusculas.includes(term);
+    });
+  }
+
+
+  // Actualiza la lista de productos filtrados
+  updateFilteredProductos(): void {
+    this.filteredProductos$ = this.productos$.pipe(
+      map((productos) => {
+        if (!productos) {
+          return null;
+        }
+        return this.filterProductos(productos, this.searchTerm);
+      })
+    );
+  }
+
+    // Actualiza la lista de productos filtrados cuando se modifica el término de búsqueda
+
+  onSearchTermChange(): void {
+    this.updateFilteredProductos();
+  }
 
 }

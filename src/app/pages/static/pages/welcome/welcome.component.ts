@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NegocioService } from '@app/services/NegocioService';
-import { NegocioResponse } from '@app/pages/negocio/store/save';
 import { ActivatedRoute } from '@angular/router';
 import { GeneralService } from '@app/services/general.service';
 import { Store } from '@ngrx/store';
@@ -13,12 +12,14 @@ import * as fromUser from '@app/store/user';
   styleUrls: ['./welcome.component.scss']
 })
 export class WelcomeComponent implements OnInit {
-  negocios: { id: number; nombre: string; picture: string }[] = []; // Incluye 'picture' en el tipo de objeto
+  negocios: { id: number; nombre: string; picture: string }[] = [];
   idUser: number | undefined;
   idNegocio: number | undefined;
   picture: string | undefined;
   idNegocioUser: string | undefined;
-  nombreNegocioUsuario: string | undefined; // Variable para almacenar el nombre del negocio
+  nombreNegocioUsuario: string | undefined;
+  isUserAuthenticated = false;
+  isLoading = true; // Agregar una bandera para controlar la carga inicial
 
   constructor(
     private negocioService: NegocioService,
@@ -30,32 +31,36 @@ export class WelcomeComponent implements OnInit {
   ngOnInit(): void {
     this.store.select(fromUser.getUser).subscribe((user) => {
       if (user) {
+        this.isUserAuthenticated = true;
         this.idUser = user.id;
         this.idNegocioUser = user.negocioId;
-        console.log('ID Usuario:', this.idUser);
-        console.log('ID Negocio User:', this.idNegocioUser);
 
         if (this.idNegocioUser !== undefined) {
-          // Verifica si idNegocioUser tiene un valor
-          this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
-            this.negocios = negocios.map((negocio) => ({
-              id: negocio.id,
-              nombre: negocio.nombre,
-              picture: negocio.picture || '' // Usa un valor por defecto si 'picture' es undefined
-            }));
+          this.negocioService.getNegocioById(parseInt(this.idNegocioUser!)).subscribe((negocio) => {
+            if (negocio) {
+              this.negocios = [
+                {
+                  id: negocio.id,
+                  nombre: negocio.nombre,
+                  picture: negocio.picture || ''
+                }
+              ];
+              this.nombreNegocioUsuario = negocio.nombre;
+              this.picture = negocio.picture || '';
 
-            console.log('Negocios cargados:', this.negocios);
+              if (this.isUserAuthenticated) {
+                console.log('ID Usuario:', this.idUser);
+                console.log('ID Negocio User:', this.idNegocioUser);
+              }
 
-            // Buscar el nombre del negocio del usuario si el ID coincide
-            const negocioUsuario = negocios.find(
-              (negocio) => negocio.id === parseInt(this.idNegocioUser!)
-            ); // Añade el operador "!" para indicar a TypeScript que estás seguro de que no es nulo
-            if (negocioUsuario) {
-              this.nombreNegocioUsuario = negocioUsuario.nombre;
-              this.picture = negocioUsuario.picture || ''; // Usa un valor por defecto si 'picture' es undefined
+              // Datos cargados exitosamente, establecer isLoading a falso
+              this.isLoading = false;
             }
           });
         }
+      } else {
+        // Si el usuario no está autenticado, establecer isLoading a falso
+        this.isLoading = false;
       }
     });
   }

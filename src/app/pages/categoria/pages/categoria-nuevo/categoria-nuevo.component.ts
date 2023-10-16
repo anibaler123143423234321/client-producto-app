@@ -35,21 +35,17 @@ export class CategoriaNuevoComponent implements OnInit {
     console.log('ID Usuario:', this.idUser);
     console.log('ID Negocio User:', this.idNegocioUser);
 
-    // Carga los datos de negocios una vez en la inicialización del componente
-    this.negocioService.cargarDatosDeNegocios().subscribe((negocios) => {
-      this.negocios = negocios.map((negocio) => ({
-        id: negocio.id,
-        nombre: negocio.nombre
-      }));
-      console.log('Negocios cargados:', this.negocios);
+    // Obtener el negocio actual del usuario
+    if (this.idNegocioUser) {
+      const negocioId = parseInt(this.idNegocioUser);
+      this.negocioService.getNegocioById(negocioId).subscribe((negocio) => {
+        if (negocio) {
+          this.nombreNegocioUsuario = negocio.nombre;
+        }
+      });
+    }
 
-      const negocioUsuario = negocios.find(
-        (negocio) => negocio.id === parseInt(this.idNegocioUser!)
-      );
-      if (negocioUsuario) {
-        this.nombreNegocioUsuario = negocioUsuario.nombre;
-      }
-    });
+
 
     // ...
 

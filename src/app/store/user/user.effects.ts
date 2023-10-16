@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationService } from '@app/services';
@@ -90,36 +90,39 @@ export class UserEffects {
       )
     )
   );
-
   init: Observable<Action> = createEffect(() =>
-    this.actions.pipe(
-      ofType(fromActions.Types.INIT),
-      switchMap(async () => localStorage.getItem('token')),
-      switchMap((token) => {
-        if (token) {
-          return this.httpClient
-            .get<UserResponse>(`${environment.url}api/user`)
-            .pipe(
-              tap((user: UserResponse) => {
-                this.GeneralService.usuario$ = user;
-                console.log(
-                  'data del usuario en sesion que viene del servidor=>',
-                  // user
-                  this.GeneralService.usuario$
-                );
-              }),
-              map(
-                (user: UserResponse) =>
-                  new fromActions.InitAuthorized(user.email, user || null)
-              ),
-              catchError((err) => of(new fromActions.InitError(err.message)))
-            );
-        } else {
-          return of(new fromActions.InitUnauthorized());
-        }
-      })
-    )
-  );
+  this.actions.pipe(
+    ofType(fromActions.Types.INIT),
+    switchMap(async () => localStorage.getItem('token')),
+    switchMap((token) => {
+      if (token) {
+        return this.httpClient
+          .get<UserResponse>(`${environment.url}api/user`)
+          .pipe(
+            tap((user: UserResponse) => {
+              // Guardar el usuario en localStorage
+              localStorage.setItem('user', JSON.stringify(user));
+
+              // Asignar el usuario a GeneralService.usuario$
+              this.GeneralService.usuario$ = user;
+              console.log(
+                'data del usuario en sesion que viene del servidor=>',
+                // user
+                this.GeneralService.usuario$
+              );
+            }),
+            map(
+              (user: UserResponse) =>
+                new fromActions.InitAuthorized(user.email, user || null)
+            ),
+            catchError((err) => of(new fromActions.InitError(err.message)))
+          );
+      } else {
+        return of(new fromActions.InitUnauthorized());
+      }
+    })
+  )
+);
 
   // ... otros efectos
 
@@ -149,22 +152,37 @@ this.actions.pipe(
 )
 );
 
+
 changeUserRole = createEffect(() =>
-this.actions.pipe(
-  ofType(fromActions.changeUserRole),
-  switchMap((action) =>
-    this.httpClient.put(`/api/user/change/${action.newRole}`, {}).pipe(
-      map(() => {
-        // Maneja la respuesta exitosa aquí si es necesario
-        return fromActions.changeUserRoleSuccess(); // Puedes crear esta acción según tus necesidades
-      }),
-      catchError((error) => {
-        // Maneja los errores aquí si es necesario
-        return of(fromActions.changeUserRoleFailure({ error: error.message }));
-      })
-    )
+  this.actions.pipe(
+    ofType(fromActions.changeUserRole),
+    switchMap((action) => {
+      const token = localStorage.getItem('token'); // Obtener el token del localStorage
+
+      // Asegurarse de que haya un token
+      if (!token) {
+        return of(fromActions.changeUserRoleFailure({ error: 'No se encontró el token de autenticación.' }));
+      }
+
+      // Configurar los encabezados de la solicitud con el token Bearer
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      // Realizar la solicitud HTTP
+      return this.httpClient.put<UserResponse>(
+        `${environment.url}api/user/change/${action.newRole}`,
+        {},
+        { headers }
+      ).pipe(
+        map(() => fromActions.changeUserRoleSuccess()),
+        catchError((error) => of(fromActions.changeUserRoleFailure({ error: error.message })))
+      );
+    })
   )
-)
 );
+
+
+
 
 }

@@ -12,6 +12,11 @@
   import {MatIconModule} from '@angular/material/icon';
   import { FormsModule } from '@angular/forms'; // Importa FormsModule
 
+  import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+  import { MatTableModule } from '@angular/material/table';
+  import { MatInputModule } from '@angular/material/input';
+
+
   @NgModule({
     declarations: [
       UserListComponent
@@ -28,6 +33,9 @@
       MatToolbarModule, // Agrega MatToolbarModule al array de imports
       MatSelectModule, // Asegúrate de que esté agregado aquí
       FormsModule, // Agrega FormsModule a la lista de imports
+    MatProgressSpinnerModule, // Añade esta línea
+    MatTableModule, // Agrega esta línea
+    MatIconModule,
 
     ]
   })

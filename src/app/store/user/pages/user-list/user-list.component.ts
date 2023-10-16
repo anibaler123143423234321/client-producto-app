@@ -34,6 +34,18 @@ export class UserListComponent implements OnInit {
 
   idNegocioUser: string | undefined;
 
+  displayedColumns: string[] = [
+    'id',
+    'negocioId',
+    'username',
+    'nombre',
+    'apellido',
+    'telefono',
+    'email',
+    'role',
+    'compras',
+  ];
+
   constructor(private store: Store<fromRoot.State>,
     public CompraService: CompraService,
     public GeneralService: GeneralService) {

@@ -38,8 +38,6 @@ export class AppComponent implements OnInit {
 
     this.store.dispatch(new fromUser.Init());
 
-    // Carga los datos de negocios una vez en la inicialización del componente
-    this.negocioService.cargarDatosDeNegocios();
 
     // Suscríbete al negocio actual del usuario
     this.negocioService.negocioActual$.subscribe((negocio) => {

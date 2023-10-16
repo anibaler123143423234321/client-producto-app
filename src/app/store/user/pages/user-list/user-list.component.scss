@@ -10,10 +10,11 @@ thead {
   color: white;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #dddddd;
   text-align: left;
-  padding: 12px; /* Aumentar el espacio entre las celdas */
+  padding: 12px;
 }
 
 /* Estilos para filas alternas */
@@ -52,4 +53,38 @@ th {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-bottom: 10px;
+}
+
+/* Estilos para el botón de editar */
+.edit-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+.mat-table-card {
+  margin: 20px auto; /* Ajusta los márgenes para centrar la tarjeta */
+  max-width: 800px; /* Establece un ancho máximo para el contenido */
+}
+
+.mat-table-container {
+  display: flex;
+  justify-content: center; /* Centra la tabla horizontalmente */
+  align-items: center; /* Centra la tabla verticalmente */
+}
+
+.mat-card {
+  padding: 16px;
+}
+
+.mat-elevation-z8 {
+  width: 100%;
 }

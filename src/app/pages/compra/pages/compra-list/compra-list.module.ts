@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   imports: [
     CommonModule,
     CompraListRoutingModule,
+    HttpClientModule, // Agrega HttpClientModule aquí
 
     SpinnerModule,
     MatButtonModule,

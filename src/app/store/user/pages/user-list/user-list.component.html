@@ -11,53 +11,62 @@
 </div>
 
 <div *ngIf="loading$ | async; else loadedContent" class="loading-message">
-  Loading...
+  Cargando...
 </div>
 
-<!-- Tabla de usuarios con filtrado -->
-<!-- Tabla de usuarios con filtrado -->
+<!-- Tarjeta para la tabla de usuarios -->
 <ng-template #loadedContent>
-  <h2>
-    Lista de Usuarios con sus Compras Pendientes Por Revisar y Despachadas
-  </h2>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Minimarket</th>
-        <th>Username</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Teléfono</th>
-        <th>Email</th>
-        <th>Rol</th>
-        <th>Compras(PRODUCTOID-NOMBREPRODUCTO-ESTADO)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of filteredUsers">
-        <td>{{ user.id }}</td>
-        <td>{{ user.negocioId }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.nombre }}</td>
-        <td>{{ user.apellido }}</td>
-        <td>{{ user.telefono }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
-        <!-- ... -->
-        <td>
-          <ul>
-            <li *ngFor="let compra of userComprasMap[user.id]">
-              {{ compra.codigo }} - {{ compra.titulo }} ({{ compra.estadoCompra }})
-              <!-- Mostrar el botón "Editar Estado" solo si el usuario es administrador -->
-              <button (click)="cambiarEstado(compra)">
-                Editar Estado
-              </button>
-            </li>
-          </ul>
-        </td>
-        <!-- ... -->
-      </tr>
-    </tbody>
-  </table>
+  <mat-card class="mat-table-card">
+    <h2>Lista de Usuarios con sus Compras Pendientes Por Revisar y Despachadas</h2>
+    <mat-table [dataSource]="filteredUsers" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.id }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="negocioId">
+      <mat-header-cell *matHeaderCellDef>Negocio</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.negocioId }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="username">
+      <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.username }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.nombre }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="apellido">
+      <mat-header-cell *matHeaderCellDef>Apellido</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.apellido }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="telefono">
+      <mat-header-cell *matHeaderCellDef>Teléfono</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.telefono }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.email }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="role">
+      <mat-header-cell *matHeaderCellDef>Rol</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{ user.role }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="compras">
+      <mat-header-cell *matHeaderCellDef>Compras (PRODUCTOID-NOMBREPRODUCTO-ESTADO)</mat-header-cell>
+      <mat-cell *matCellDef="let user">
+        <ul>
+          <li *ngFor="let compra of userComprasMap[user.id]">
+            {{ compra.codigo }} - {{ compra.titulo }} ({{ compra.estadoCompra }})
+            <button mat-button color="primary" (click)="cambiarEstado(compra)" class="edit-button">
+              Editar Estado
+            </button>
+          </li>
+        </ul>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</mat-card>
 </ng-template>

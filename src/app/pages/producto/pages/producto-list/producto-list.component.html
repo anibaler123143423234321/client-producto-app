@@ -1,74 +1,88 @@
-<!-- Mensaje de éxito
+<!-- Mensaje de éxito -->
 <div *ngIf="stockActualizado" class="alert alert-success">
   Stock actualizado correctamente.
 </div>
--->
 
 <app-spinner *ngIf="loading$ | async"></app-spinner>
+
 <section class="container">
   <!-- Productos Agregados -->
-  <!-- Productos Agregados -->
-<div *ngIf="mostrarTabla" class="productos-agregados">
-  <h2>Tus Productos Agregados</h2>
-  <table class="productos-table">
-    <thead>
-      <tr>
-        <th>Nombre Producto</th>
-        <th>Cantidad</th>
-        <th>Precio</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let compra of arrayCompra">
-        <td>{{ compra.titulo }}</td>
-        <td>{{ compra.cantidad }}</td>
-        <td>{{ compra.precioCompra }}</td>
-      </tr>
-      <tr>
-        <td colspan="2" class="total-label">Precio Total:</td>
-        <td class="total-price">{{ calculateTotalPrice() }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="comprar-btn">
-    <button mat-button [routerLink]="['../../compra/final']" class="no-underline">
-      <span class="go-to-cart">Ir a Comprar</span>
-    </button>
+  <div *ngIf="mostrarTabla" class="productos-agregados">
+    <h2>Tus Productos Agregados</h2>
+    <table class="productos-table">
+      <thead>
+        <tr>
+          <th>Nombre Producto</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let compra of arrayCompra">
+          <td class="product-name">{{ compra.titulo }}</td>
+          <td class="product-quantity">{{ compra.cantidad }}</td>
+          <td class="product-price">{{ compra.precioCompra }}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="total-label">Precio Total:</td>
+          <td class="total-price">{{ calculateTotalPrice() }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="comprar-btn">
+      <button mat-button [routerLink]="['../../compra/final']" class="no-underline small-button">
+        <span class="go-to-cart">Ir a Comprar</span>
+      </button>
+    </div>
   </div>
 
+  <div class="container">
+    <div class="half-width-container categoria-container">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Selecciona una categoría</mat-label>
+        <mat-select [(ngModel)]="selectedCategoria" (selectionChange)="filterByCategory()">
+          <mat-option value="-1">Todas las categorías</mat-option>
+          <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-</div>
-
-
-  <div class="categoria-container">
-    <label for="categoria">Selecciona una categoría:</label>
-    <select id="categoria" [(ngModel)]="selectedCategoria" (change)="filterByCategory()">
-      <option value="-1">Todas las categorías</option>
-      <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</option>
-    </select>
+    <div class="half-width-container search-container">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Buscar Productos</mat-label>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Escribe aquí..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchTermChange()"
+          class="search-input"
+          matInput
+        />
+      </mat-form-field>
+    </div>
   </div>
-
-
 
   <div class="cards-container">
-    <ul class="cards">
-      <li class="cards__item" *ngFor="let producto of filteredProductos$ | async">
-        <mat-card class="example-card">
-          <mat-card-header>
-            <mat-card-title >Nombre del Producto: {{ producto.nombre }}</mat-card-title>
-            <mat-card-subtitle >Precio del Producto: {{ producto.precio }}</mat-card-subtitle>
-            <mat-card-subtitle >Stock del Producto: {{ producto.stock }}</mat-card-subtitle>
-          </mat-card-header>
-          <img
-            mat-card-image
-            src="{{ producto.picture ? producto.picture : pictureDefault }}"
-            alt="{{ producto.nombre }}"
-          />
-          <mat-card-actions>
-            <button mat-button>Ver</button>
-            <button mat-button (click)="addCarrito(producto.id, producto.precio, producto.nombre)">
-              Añadir al Carrito
-            </button>
+    <div *ngFor="let producto of filteredProductos$ | async" class="cards__item">
+      <mat-card class="example-card">
+        <mat-card-header>
+          <mat-card-title>Nombre del Producto: {{ producto.nombre }}</mat-card-title>
+          <mat-card-subtitle>Precio del Producto: {{ producto.precio }}</mat-card-subtitle>
+          <mat-card-subtitle>Stock del Producto: {{ producto.stock }}</mat-card-subtitle>
+        </mat-card-header>
+        <img
+          mat-card-image
+          src="{{ producto.picture ? producto.picture : pictureDefault }}"
+          alt="{{ producto.nombre }}"
+          class="product-image"
+        />
+        <mat-card-actions class="button-container">
+          <div class="button-column">
+            <button mat-button class="my-button" (click)="showProductDetails(producto)">Ver</button>
+            <button mat-button class="my-button" (click)="addCarrito(producto.id, producto.precio, producto.nombre)">Añadir al Carrito</button>
+          </div>
+          <div class="button-column">
             <button mat-button
               [routerLink]="[
                 '../../compra/nuevaCompra',
@@ -80,23 +94,46 @@
                 apellidoUsuario
               ]"
               routerLinkActive="active"
+              class="small-button"
             >
               Comprar
             </button>
-          </mat-card-actions>
-        </mat-card>
-      </li>
-    </ul>
+          </div>
+          <div class="button-column">
+            <!-- Botón para actualizar el stock -->
+            <button mat-button (click)="startEditingStock(producto)">Actualizar Stock</button>
+            <!-- Formulario para editar el stock y botón de guardar -->
+            <div *ngIf="editingStock && selectedProductId === producto.id" class="stock-form">
+              <input type="number" [(ngModel)]="newStockValue" placeholder="Nuevo Stock">
+              <button mat-button (click)="guardarStock()" class="small-button">Guardar</button>
+              <button mat-button (click)="cancelarEdicionStock()" class="small-button">Cancelar</button>
+              <!-- Botón para cerrar el formulario -->
+              <button mat-button (click)="cerrarFormulario()" class="small-button">Cerrar</button>
+            </div>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Modal de detalles del producto -->
+  <div *ngIf="selectedProduct" class="product-details-modal">
+    <div class="modal-content">
+      <h3>Detalles del Producto</h3>
+      <p>Nombre: {{ selectedProduct.nombre }}</p>
+      <p>Precio: {{ selectedProduct.precio }}</p>
+      <p>Stock: {{ selectedProduct.stock }}</p>
+      <button mat-button (click)="closeProductDetails()" class="small-button">Cerrar</button>
+    </div>
   </div>
 
   <div class="pagination">
-    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1">
+    <button mat-button (click)="changePage(-1)" [disabled]="currentPage === 1" class="small-button">
       Anterior
     </button>
     <span>Página {{ currentPage }}</span>
     <button mat-button (click)="changePage(1)" [disabled]="currentPage * itemsPerPage >=
-      (productosLength !== undefined ? productosLength : 0)"
-      *ngIf="productosLength !== undefined">
+      (productosLength !== undefined ? productosLength : 0)" *ngIf="productosLength !== undefined" class="small-button">
       Siguiente
     </button>
   </div>

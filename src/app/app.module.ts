@@ -37,6 +37,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth-interceptor';
 import { RouterModule, Routes } from '@angular/router';
 import { CarritoService } from './services/CarritoService';
+import { ContactanosComponent } from './pages/contactanos/contactanos.component';
 
 const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({maxAge: 50}) : [];
 
@@ -45,6 +46,7 @@ const StoreDevtools = !environment.production ? StoreDevtoolsModule.instrument({
     AppComponent,
     MenuListComponent,
     HeaderComponent,
+    ContactanosComponent,
 
   ],
   imports: [

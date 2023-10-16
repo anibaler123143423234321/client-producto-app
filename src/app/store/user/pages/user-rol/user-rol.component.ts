@@ -71,31 +71,5 @@ export class UserRolComponent implements OnInit {
     }
   }
 
-  // Cambiar el rol del usuario utilizando la acción changeUserRole
-  cambiarRol(user: UserResponse): void {
-    const rolesPosibles: string[] = ['USER', 'ADMIN', 'SUPERADMIN'];
 
-    const nuevoRol = prompt(
-      'Ingrese el nuevo rol:\n' + rolesPosibles.join(', ')
-    );
-
-    if (nuevoRol && rolesPosibles.includes(nuevoRol)) {
-      const username = user.username;
-
-      // Despacha la acción changeUserRole
-      this.store.dispatch(
-        fromActions.changeUserRole({ username: username, newRole: nuevoRol })
-      );
-
-      this.estadoEditadoExitoso = true;
-      this.mensajeExito = 'Rol Cambiado con Éxito';
-
-      setTimeout(() => {
-        this.estadoEditadoExitoso = false;
-        this.mensajeExito = '';
-      }, 5000);
-    } else {
-      console.log('Operación de cambio de rol cancelada o rol no válido.');
-    }
-  }
 }
