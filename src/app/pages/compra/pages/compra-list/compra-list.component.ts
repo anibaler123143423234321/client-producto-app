@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CompraService } from '@app/services/CompraService';
 import { NegocioService } from '@app/services/NegocioService';
+import * as fromUser from '@app/store/user';
 
 @Component({
   selector: 'app-compra-list',
@@ -35,18 +36,20 @@ export class CompraListComponent implements OnInit {
   apellidoUsuario: string;
   idNegocioUser: string | undefined;
 
+
   currentPage = 1;
   itemsPerPage = 15;
   boletaUrl!: SafeUrl;
   negocioPicture: string = ''; // Declaramos la variable negocioPicture aquí
+  user$!: Observable<fromUser.UserResponse>;
+  isAuthorized$!: Observable<boolean>;
 
   constructor(
     private store: Store<fromRoot.State>,
     public generalService: GeneralService,
     private router: Router,
     public negocioService: NegocioService,
-    public compraService: CompraService,
-    private httpClient: HttpClient
+    public compraService: CompraService
   ) {
     this.comprasLength = 0;
     this.nombreUsuario = '';
@@ -64,6 +67,9 @@ export class CompraListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.user$ = this.store.pipe(select(fromUser.getUser)) as Observable<fromUser.UserResponse>;
+    this.isAuthorized$ = this.store.pipe(select(fromUser.getIsAuthorized)) as Observable<boolean>;
+
     this.store.dispatch(new fromList.Read());
     this.loading$ = this.store.pipe(select(fromList.getLoading));
 
@@ -104,72 +110,53 @@ export class CompraListComponent implements OnInit {
     const pdfFonts: any = require('pdfmake/build/vfs_fonts');
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-    // Tamaño de página ajustado para ticketera de 80 mm
-    const page = {
-      width: 80, // 80 mm de ancho
-      height: 210, // 210 mm de alto (tamaño típico de un recibo)
-    };
-
-    const styles = {
-      header: {
-        fontSize: 12, // Tamaño de fuente ajustado
-        bold: true,
-        margin: [0, 5, 0, 5], // Márgenes ajustados
-      },
-      info: {
-        fontSize: 10,
-        margin: [0, 5, 0, 5],
-      },
-    };
-
     compraGroups.forEach((compras, index) => {
-      // Verifica que haya una URL de imagen válida antes de descargarla
-      if (this.negocioPicture) {
-        // Descargar la imagen de Firebase y convertirla en un dato URI
-        this.httpClient.get(this.negocioPicture, { responseType: 'blob' }).subscribe((imageBlob: Blob) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(imageBlob);
-          reader.onloadend = () => {
-            const imagenDataURI = reader.result as string;
-
-            const usuario = `${this.nombreUsuario} ${this.apellidoUsuario}`;
-            const primeraCompra = compras[0];
-            const fechaCompra = new Date(primeraCompra.fechaCompra);
-            const idsCompra = compras.map((compra) => compra.codigo?.toString()).join(', ');
-            const idsProducto = compras.map((compra) => compra.productoId.toString()).join(', ');
-            const nombresProductos = compras.map((compra) =>
-              `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`
-            ).join(', ');
-            const precioTotal = this.getTotalPrecio(compras);
-
-            const docDefinition = {
-              page: page,
-              content: [
-                { text: 'Boleta de Compra', style: 'header' },
-                { text: 'Información de las Compras:', style: 'info' },
-                { image: imagenDataURI, width: 100, alignment: 'center' },
-                { text: `Nombre del Usuario: ${usuario}`, style: 'info' },
-                { text: `Fecha de Compra: ${fechaCompra}`, style: 'info' },
-                { text: `Codigos de las Compra: ${idsCompra}`, style: 'info' },
-                { text: `Codigos de los Productos: ${idsProducto}`, style: 'info' },
-                { text: `Nombre del Producto: ${nombresProductos}`, style: 'info' },
-                { text: `Precio Total de los Productos a pagar: $${precioTotal}`, style: 'info' },
-                { text: '', margin: [0, 10, 0, 0] },
-              ],
-              styles: styles,
-            };
-
-            pdfMake.vfs = pdfFonts.pdfMake.vfs;
-            const nombreUsuario = this.nombreUsuario || 'Usuario Desconocido';
-            const nombreArchivo = `boleta_${nombreUsuario}_${index}.pdf`;
-
-            pdfMake.createPdf(docDefinition).download(nombreArchivo);
-          }
-          });
+      compras.forEach((compra) => {
+        if (compra.fechaCompra) {
+          compra.fechaCompra = this.calcularFechaDiferencia(compra.fechaCompra).toLocaleString();
+        } else {
+          compra.fechaCompra = "Fecha no proporcionada"; // Otra acción en caso de fecha no proporcionada
         }
-        });
-      }
+      });
 
+      const usuario = `${this.nombreUsuario} ${this.apellidoUsuario}`;
+      const primeraCompra = compras[0];
+      const fechaCompra = compras.map((compra) => compra.fechaCompra);
+      const idsCompra = compras.map((compra) => compra.codigo?.toString()).join(', ');
+      const idsProducto = compras.map((compra) => compra.productoId.toString()).join(', ');
+      const nombresProductos = compras.map((compra) =>
+        `${compra.titulo} (${compra.cantidad} cant) $${compra.precioCompra.toFixed(2)}`
+      ).join(', ');
+      const precioTotal = this.getTotalPrecio(compras);
+
+      const docDefinition = {
+        content: [
+          { text: 'Boleta de Compra', style: 'header' },
+          { text: 'Información de las Compras:', style: 'info' },
+          { text: `Nombre del Usuario: ${usuario}`, style: 'info' },
+          { text: `Fecha de Compra: ${fechaCompra}`, style: 'info' },
+          { text: `Codigos de las Compra: ${idsCompra}`, style: 'info' },
+          { text: `Codigos de los Productos: ${idsProducto}`, style: 'info' },
+          { text: `Nombre del Producto: ${nombresProductos}`, style: 'info' },
+          { text: `Precio Total de los Productos a pagar: $${precioTotal}`, style: 'info' },
+          { text: '', margin: [0, 10, 0, 0] },
+        ],
+        styles: {
+          header: {
+            fontSize: 12,
+            bold: true,
+            margin: [0, 5, 0, 5],
+          },
+          info: {
+            fontSize: 10,
+            margin: [0, 5, 0, 5],
+          },
+        },
+      };
+
+      pdfMake.createPdf(docDefinition).download(`boleta_${usuario}_${index}.pdf`);
+    });
+  }
 
 
 
@@ -214,9 +201,12 @@ getTotalCantidad(compras: CompraResponse[]): number {
 
 calcularFechaDiferencia(fechaCompraStr: string): Date {
   const fechaCompra = new Date(fechaCompraStr);
+  if (isNaN(fechaCompra.getTime())) {
+    // Si la fecha no es válida, puedes manejarla como desees, por ejemplo, retornar una fecha predeterminada o mostrar un mensaje de error.
+    return new Date(); // Retorna una fecha predeterminada
+  }
   fechaCompra.setHours(fechaCompra.getHours() - 5); // Restar 5 horas
   return fechaCompra;
 }
-
 
 }

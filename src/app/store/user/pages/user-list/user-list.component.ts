@@ -19,6 +19,7 @@ import { switchMap } from 'rxjs/operators';
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent implements OnInit {
   users$: Observable<UserResponse[] | null>;
@@ -35,9 +36,7 @@ export class UserListComponent implements OnInit {
   idNegocioUser: string | undefined;
 
   displayedColumns: string[] = [
-    'id',
     'negocioId',
-    'username',
     'nombre',
     'apellido',
     'telefono',
@@ -93,8 +92,6 @@ export class UserListComponent implements OnInit {
       // Verificar si 'role' existe antes de intentar acceder a él
       if (user.role) {
         return (
-          user.id.toString().includes(term) ||
-          user.username.toLowerCase().includes(term) ||
           user.nombre.toLowerCase().includes(term) ||
           user.apellido.toLowerCase().includes(term) ||
           user.telefono.toLowerCase().includes(term) ||

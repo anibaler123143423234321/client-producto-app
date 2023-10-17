@@ -33,7 +33,8 @@
                     {{ compra.tipoEnvio }} --
                     {{ compra.tipoDePago }} --
                     Total a pagar: $ {{ compra.precioCompra.toFixed(2) }} --
-                    Con fecha compra: {{ calcularFechaDiferencia(compra.fechaCompra) | date : 'd/M/yyyy HH:mm:ss'}}
+                    Con fecha compra: {{ calcularFechaDiferencia(compra.fechaCompra) | date: 'dd/MM/yyyy HH:mm:ss' }}
+
                   </li>
                 </ul>
               </td>

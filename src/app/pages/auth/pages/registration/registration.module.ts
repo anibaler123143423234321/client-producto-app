@@ -16,6 +16,8 @@ import { SpinnerModule } from '@app/shared/indicators';
 
 import { MatSelectModule } from '@angular/material/select';
 import { EntityPhotoModule } from '@app/shared/layouts';
+import { HttpClientModule } from '@angular/common/http';
+
 
 @NgModule({
   declarations: [
@@ -24,7 +26,7 @@ import { EntityPhotoModule } from '@app/shared/layouts';
   imports: [
     CommonModule,
     RegistrationRoutingModule,
-
+    HttpClientModule,
     MatFormFieldModule,
     MatButtonModule,
     FormsModule,

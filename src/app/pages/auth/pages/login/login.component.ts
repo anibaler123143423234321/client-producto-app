@@ -22,8 +22,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Esta sería la forma de limpiar el localStorage al inicio del componente
-    localStorage.clear();
+
   }
 
   loginUsuario(form: NgForm): void {

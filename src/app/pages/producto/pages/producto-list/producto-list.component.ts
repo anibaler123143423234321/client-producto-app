@@ -15,9 +15,8 @@ import { CategoriaService } from '@app/services/CategoriaService';
 import { ProductoService } from '@app/services/ProductoService';
 import { User } from '@app/models/backend';
 import {  ElementRef, ViewChild } from '@angular/core';
-import { Producto } from '@app/models/frontend';
-import { MatDialog } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
+
+import * as fromUser from '@app/store/user';
 
 @Component({
   selector: 'app-producto-list',
@@ -26,7 +25,8 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class ProductoListComponent implements OnInit {
   @Input() user: User | null = null;
-
+  user$!: Observable<fromUser.UserResponse>;
+  isAuthorized$!: Observable<boolean>;
   productos$!: Observable<ProductoResponse[] | null>;
   userId!: number;
   productoId: number | undefined;
@@ -95,6 +95,8 @@ export class ProductoListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.user$ = this.store.pipe(select(fromUser.getUser)) as Observable<fromUser.UserResponse>;
+    this.isAuthorized$ = this.store.pipe(select(fromUser.getIsAuthorized)) as Observable<boolean>;
     this.store.dispatch(new fromList.Read());
     this.loading$ = this.store.pipe(select(fromList.getLoading));
 

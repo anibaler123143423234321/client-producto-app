@@ -73,11 +73,7 @@ export class AppComponent implements OnInit {
     this.notification.error("Se encontraron errores en el proceso");
   }
 
-  onSignOut(): void {
-    this.negocios = [];
-    this.negocioService.userId = 0;
-    this.nombreNegocioUsuario = undefined;
-
+  onSignOut() : void {
     localStorage.removeItem('token');
     this.store.dispatch(new fromUser.SignOut());
     this.router.navigate(['/auth/login']);

@@ -1,0 +1,7 @@
+{
+  "/api/v2/reniec": {
+    "target": "https://api.apis.net.pe",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

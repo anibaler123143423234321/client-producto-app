@@ -15,11 +15,12 @@
   import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   import { MatTableModule } from '@angular/material/table';
   import { MatInputModule } from '@angular/material/input';
-
+  import { EditCompraEstadoModalComponent } from './EditCompraEstadoModalComponent';
 
   @NgModule({
     declarations: [
-      UserListComponent
+      UserListComponent,
+      EditCompraEstadoModalComponent
     ],
     imports: [
       CommonModule,

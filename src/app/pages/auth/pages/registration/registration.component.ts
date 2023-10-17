@@ -17,6 +17,7 @@ export class RegistrationComponent implements OnInit {
   negocios: { id: number; nombre: string }[] = [];
   selectedNegocioId: number | undefined;
   photoLoaded!: string;
+  dniValid = true;
 
   constructor(
     private store: Store<fromRoot.State>,
@@ -42,28 +43,34 @@ ngOnInit(): void {
 }
 
 
-  registrarUsuario(form: NgForm) {
+registrarUsuario(form: NgForm) {
+  if (form.valid) {
+    if (form.value.password !== form.value.passwordConfirme) {
+      // Si las contraseñas no coinciden, establece un error en el campo "passwordConfirme"
+      form.controls['passwordConfirme'].setErrors({ 'passwordMismatch': true });
+    } else {
+      // Si las contraseñas coinciden, procede con el registro
+      const userCreateRequest: fromUser.UserCreateRequest = {
+        nombre: form.value.nombre,
+        apellido: form.value.apellidos,
+        telefono: form.value.telefono,
+        username: form.value.username,
+        email: form.value.email,
+        password: form.value.password,
+        negocioId: this.selectedNegocioId?.toString(), // Convertir a cadena
+        dni: form.value.dni,
+        tipoDoc: form.value.tipoDoc,
+        departamento: form.value.departamento,
+        provincia: form.value.provincia,
+        distrito: form.value.distrito,
+      };
+      console.log('Enviando datos de registro:', userCreateRequest);
 
-    if(form.valid) {
-        const userCreateRequest : fromUser.UserCreateRequest =  {
-          nombre: form.value.nombre,
-          apellido: form.value.apellidos,
-          telefono: form.value.telefono,
-          username: form.value.username,
-          email: form.value.email,
-          password: form.value.password,
-          negocioId: this.selectedNegocioId?.toString(), // Convertir a cadena
-          dni: form.value.dni,
-          tipoDoc : form.value.tipoDoc,
-          departamento: form.value.departamento,
-          provincia: form.value.provincia,
-          distrito: form.value.distrito,
-        }
-
-        this.store.dispatch(new fromUser.SignUpEmail(userCreateRequest));
+      this.store.dispatch(new fromUser.SignUpEmail(userCreateRequest));
     }
-
   }
+}
+
 
   onFilesChanged(url: any): void {
     if (url) {
@@ -71,4 +78,23 @@ ngOnInit(): void {
     }
   }
 
+
+  dniInputChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Elimina cualquier carácter no numérico
+    value = value.replace(/\D/g, '');
+
+    // Limita el valor a 8 caracteres
+    if (value.length > 9) {
+      value = value.slice(0, 9);
+    }
+
+    // Actualiza el valor en el campo de entrada
+    input.value = value;
+
+    // Verifica si el valor contiene 8 números
+    this.dniValid = /^\d{9}$/.test(value);
+  }
 }

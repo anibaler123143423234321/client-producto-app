@@ -76,7 +76,7 @@
 /* Media queries para hacer que la cuadrícula sea responsive */
 @media screen and (max-width: 768px) {
   .cards-container {
-    grid-template-columns: repeat(auto-fill, minmax(1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
   }
   .button-column {
     flex-direction: column;

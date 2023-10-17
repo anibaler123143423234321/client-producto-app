@@ -1,0 +1,9 @@
+<div mat-dialog-content>
+  <h1>Usuario: {{ user.nombre }} {{ user.apellido }}</h1>
+  <p>Compras relacionadas:</p>
+  <ul>
+    <li *ngFor="let compra of compras">
+      {{ compra.titulo }} - {{ compra.estadoCompra }}
+    </li>
+  </ul>
+</div>
