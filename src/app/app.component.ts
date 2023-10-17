@@ -9,6 +9,8 @@ import * as fromRoot from './store';
 import * as fromUser from './store/user';
 import { GeneralService } from './services/general.service';
 import { NegocioService } from '@app/services/NegocioService';
+import { CompraService } from './services/CompraService';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -22,13 +24,15 @@ export class AppComponent implements OnInit {
   isAuthorized$!: Observable<boolean>;
   negocios: { id: number; nombre: string }[] = [];
   nombreNegocioUsuario: string | undefined;
+  private loggedIn = true; // Variable para rastrear el estado de inicio de sesión
+  private compraSubscription: Subscription | undefined;
 
   constructor(
     private fs: AngularFirestore,
     private notification: NotificationService,
     private store: Store<fromRoot.State>,
     private router: Router,
-    private GeneralService: GeneralService,
+    private compraService: CompraService,
     private negocioService: NegocioService
   ) {}
 
@@ -57,6 +61,14 @@ export class AppComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+    // Al cerrar sesión, detén la suscripción
+    if (this.compraSubscription) {
+      this.compraSubscription.unsubscribe();
+    }
+    this.loggedIn = false;
+  }
+
   onToggleSpinner(): void {
     this.showSpinner = !this.showSpinner;
   }
@@ -74,6 +86,7 @@ export class AppComponent implements OnInit {
   }
 
   onSignOut() : void {
+
     localStorage.removeItem('token');
     this.store.dispatch(new fromUser.SignOut());
     this.router.navigate(['/auth/login']);

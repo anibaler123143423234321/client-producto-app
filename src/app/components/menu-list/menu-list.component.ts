@@ -19,6 +19,7 @@ export class MenuListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+
   closeMenu() : void {
 
   // Emitir el evento para cerrar el menú
@@ -30,12 +31,7 @@ export class MenuListComponent implements OnInit {
 
 
   onSignOut(): void {
-    console.log('onSignOut se ha llamado');
 
-    // Borrar todos los elementos del almacenamiento local
-    localStorage.clear();
-
-    console.log('Toda la caché de localStorage se ha borrado.');
 
     // Emitir el evento para cerrar sesión
     this.signOut.emit();

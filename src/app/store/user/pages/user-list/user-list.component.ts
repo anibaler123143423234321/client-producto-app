@@ -14,6 +14,8 @@ import { CompraService } from '@app/services/CompraService';
 import { GeneralService } from '@app/services/general.service';
 import { interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+
 
 
 @Component({
@@ -44,12 +46,17 @@ export class UserListComponent implements OnInit {
     'role',
     'compras',
   ];
+  private loggedIn = true; // Variable para rastrear el estado de inicio de sesión
+  private intervalSubscription: any; // Variable para rastrear la suscripción al intervalo
+  private compraSubscription: Subscription | undefined;
 
   constructor(private store: Store<fromRoot.State>,
+
     public CompraService: CompraService,
     public GeneralService: GeneralService) {
     this.users$ = this.store.select(fromSelectors.getUsers);
     this.loading$ = this.store.select(fromSelectors.getLoading);
+
   }
 
   ngOnInit() {
@@ -70,19 +77,35 @@ export class UserListComponent implements OnInit {
         }
       });
     });
-
-    // Llama a cargarDatosDeCompras cada 10 segundos
-    interval(10000) // Intervalo de 10 segundos
-      .pipe(
-        switchMap(() => this.CompraService.cargarDatosDeCompras())
-      )
-      .subscribe((compras) => {
-        console.log('Datos de compras actualizados automáticamente:', compras);
-        this.compras$ = of(compras);
-        this.userComprasMap = this.filterComprasByUser(this.filteredUsers);
-      });
+// Llama a cargarDatosDeCompras cada 10 segundos
+this.intervalSubscription = interval(10000) // Intervalo de 10 segundos
+.pipe(
+  switchMap(() => this.CompraService.cargarDatosDeCompras())
+)
+.subscribe((compras) => {
+  if (this.loggedIn) {
+    console.log('Datos de compras actualizados automáticamente:', compras);
+    this.compras$ = of(compras);
+    this.userComprasMap = this.filterComprasByUser(this.filteredUsers);
+  } else {
+    // El usuario ha cerrado sesión, detener el intervalo
+    this.intervalSubscription.unsubscribe();
   }
+});
+}
 
+
+ngOnDestroy() {
+  // Al cerrar sesión, detén la suscripción
+  if (this.intervalSubscription) {
+    this.intervalSubscription.unsubscribe();
+  }
+  this.loggedIn = false;
+
+  if (this.compraSubscription) {
+    this.compraSubscription.unsubscribe();
+  }
+}
 
 
   // Función de filtro de usuarios
